@@ -81,6 +81,10 @@ Expected: Animation is running
 Actual: Not
 5)
 It seems score is not synchronized when the player hust connected into running game
+6) 
+The size of the world is set in the Host and there is a case when 
+another man plays on big device with better pixel quality for him
+there will be "gaps" (he will see how spirits are spawned)
 
 Client 1:
 Character 1 + Movement Direction + Control

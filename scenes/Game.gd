@@ -120,6 +120,7 @@ func _on_player_spawner_spawned(spawned_node):
 	
 	player.set_controlable()
 	player.set_grey_animator()
+	player.set_camera()
 
 func _on_player_spawner_despawned(node):
 	pass

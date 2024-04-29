@@ -52,6 +52,10 @@ func set_controlable():
 	character_control.player = $Player
 	add_child(character_control)
 
+func set_camera():
+	pass
+	#add_child(Camera2D.new())
+
 func disable():
 	$Player.disable()
 	
@@ -83,6 +87,7 @@ script = SubResource("GDScript_grh33")
 character_control_scene = ExtResource("1_kq5m8")
 
 [node name="Player" parent="." instance=ExtResource("1_65n86")]
+position = Vector2(0, 0)
 
 [node name="ServerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_63vey")
