@@ -1,0 +1,40 @@
+[gd_scene load_steps=3 format=3 uid="uid://dg1y7d3lss2m3"]
+
+[ext_resource type="PackedScene" uid="uid://dmr0fcamx7t56" path="res://src/joystick/extensions/joystick/virtual_joystick.tscn" id="1_b51hx"]
+[ext_resource type="Script" path="res://src/joystick/Control.gd" id="2_kdtix"]
+
+[node name="HUD Virtual Joystick" type="CanvasLayer"]
+
+[node name="Virtual Joystick" parent="." instance=ExtResource("1_b51hx")]
+visible = false
+anchors_preset = 0
+anchor_top = 0.0
+anchor_bottom = 0.0
+offset_top = 0.0
+offset_right = 480.0
+offset_bottom = 720.0
+grow_vertical = 1
+joystick_mode = 2
+use_input_actions = false
+
+[node name="Base" parent="Virtual Joystick" index="0"]
+offset_left = -75.0
+offset_top = -75.0
+offset_right = 75.0
+offset_bottom = 75.0
+pivot_offset = Vector2(75, 75)
+expand_mode = 5
+
+[node name="Tip" parent="Virtual Joystick/Base" index="0"]
+offset_left = -37.5
+offset_top = -37.5
+offset_right = 37.5
+offset_bottom = 37.5
+pivot_offset = Vector2(37.5, 37.5)
+expand_mode = 1
+
+[node name="Control" type="Node" parent="." node_paths=PackedStringArray("joystick")]
+script = ExtResource("2_kdtix")
+joystick = NodePath("../Virtual Joystick")
+
+[editable path="Virtual Joystick"]

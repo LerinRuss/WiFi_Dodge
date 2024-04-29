@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://dw7e13pid8ruh"]
+
+[ext_resource type="Script" path="res://src/DesktopKeyBoardControl.gd" id="1_rvt7p"]
+[ext_resource type="PackedScene" uid="uid://kyv8kapo5hia" path="res://src/core/core.tscn" id="2_xivrn"]
+
+[node name="Desktop" type="Node"]
+
+[node name="KeyBoardControl" type="Node" parent="." node_paths=PackedStringArray("player")]
+script = ExtResource("1_rvt7p")
+player = NodePath("../Core/Player")
+
+[node name="Core" parent="." instance=ExtResource("2_xivrn")]
+
+[editable path="Core"]

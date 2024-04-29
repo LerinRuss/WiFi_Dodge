@@ -1,0 +1,58 @@
+[gd_scene load_steps=8 format=3 uid="uid://c00fpinqf1jyd"]
+
+[ext_resource type="Script" path="res://src/core/fish/Fish.gd" id="1_bi6ge"]
+[ext_resource type="Texture2D" uid="uid://jb80bk7s8h0y" path="res://src/core/fish/enemySwimming_1.png" id="2_idcsv"]
+[ext_resource type="Texture2D" uid="uid://85wkw3k7tveh" path="res://src/core/fish/enemySwimming_2.png" id="3_14s50"]
+[ext_resource type="Texture2D" uid="uid://dr063qpdevwqm" path="res://src/core/fish/enemyWalking_1.png" id="4_3vtxi"]
+[ext_resource type="Texture2D" uid="uid://cdcyv7a201cek" path="res://src/core/fish/enemyWalking_2.png" id="5_gqium"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_di06o"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_14s50")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_idcsv")
+}],
+"loop": true,
+"name": &"swim",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_3vtxi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_gqium")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 3.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_k51kl"]
+radius = 34.0
+height = 70.0
+
+[node name="Fish" type="RigidBody2D" groups=["mobs"]]
+collision_mask = 0
+gravity_scale = 0.0
+script = ExtResource("1_bi6ge")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+rotation = 1.5708
+scale = Vector2(0.75, 0.75)
+sprite_frames = SubResource("SpriteFrames_di06o")
+animation = &"walk"
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 12)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_k51kl")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+metadata/_edit_group_ = true
+
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]
