@@ -10,10 +10,18 @@ config_version=5
 
 [application]
 
-config/name="Simple Dodger"
-run/main_scene="res://src/mobile.tscn"
+config/name="WiFi Dodge"
+run/main_scene="res://scenes/MainMenu.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
 config/icon="res://icon.svg"
+
+[autoload]
+
+RpcAwait="*res://addons/rpc-await/rpc_await.gd"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/rpc-await/plugin.cfg")
 
 [display]
 
