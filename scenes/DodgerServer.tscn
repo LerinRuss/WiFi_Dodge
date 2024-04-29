@@ -1,0 +1,168 @@
+[gd_scene load_steps=6 format=3 uid="uid://c6tpvvjjol81d"]
+
+[ext_resource type="FontFile" uid="uid://ggggasvo4rei" path="res://fonts/Xolonium-Regular.ttf" id="1_253p8"]
+[ext_resource type="Shortcut" uid="uid://dlypf33gwc5rl" path="res://shortcuts/start_game_shortcut.tres" id="2_ygj1b"]
+
+[sub_resource type="GDScript" id="GDScript_npuod"]
+script/source = "extends Node
+
+const MAX_CONNECTIONS = 2
+
+@export var game: Game
+var _game_over_predicate: Callable
+var _game_started: bool = false
+
+func _ready():
+	self._game_over_predicate = Game.MODS.get(game.game_mode)
+	
+	var screen_size: Vector2 = get_viewport().get_visible_rect().size
+	$SpiritPath.curve.add_point(Vector2(0, 0))
+	$SpiritPath.curve.add_point(Vector2(screen_size.x, 0))
+	$SpiritPath.curve.add_point(Vector2(screen_size.x, screen_size.y))
+	$SpiritPath.curve.add_point(Vector2(0, screen_size.y))
+	
+	_host()
+	new_game()
+	_set_broadcast()
+
+func _process(delta):
+	if _game_started and self._game_over_predicate.call(self.game):
+		game_over()
+		
+		_game_started = false
+
+func _host():
+	multiplayer.peer_connected.connect(_on_client_connected)
+	multiplayer.peer_disconnected.connect(_on_client_disconnected)
+	
+	var peer = ENetMultiplayerPeer.new()
+	var error = peer.create_server(Game.PORT, MAX_CONNECTIONS)
+	
+	if error:
+		return error
+	
+	multiplayer.multiplayer_peer = peer
+
+func _set_broadcast():
+	var advertiser: ServerAdvertiser = ServerAdvertiser.new()
+	advertiser.server_info = {\"port\": Game.PORT}
+	
+	add_child(advertiser)
+
+func new_game() -> void:
+	game.set_score(0)
+	for rest_players in game.get_players():
+		rest_players.queue_free()
+	
+	for rest_mobs in game.get_mobs():
+		rest_mobs.queue_free()
+	
+	var ids: PackedInt32Array = multiplayer.get_peers()
+	ids.append(1)
+	game.arrange_players(ids)
+	
+	$StartTimer.start()
+	$HUD.hide_restart_button()
+	game.set_score(0)
+	game.show_temp_message(\"Get Ready\")
+	game.play_music()
+	
+	_game_started = true
+
+func game_over():
+	$ScoreTimer.stop()
+	$SpiritTimer.stop()
+
+	self._async_show_game_over_hud()
+	
+	game.stop_music()
+	game.play_sound()
+	
+func _async_show_game_over_hud() -> void:
+	await game.show_temp_message(\"Game Over\")
+	game.show_message(\"Dodge the Creeps!\")
+	await get_tree().create_timer(1.0).timeout
+	$HUD.show_restart_button()
+
+func _on_client_connected(id: int):
+	pass
+
+func _on_client_disconnected(id: int):
+	pass
+
+func _on_start_timer_timeout():
+	$SpiritTimer.start()
+	$ScoreTimer.start()
+
+func _on_spirit_timer_timeout():
+	var mob_spawn_location: PathFollow2D = $SpiritPath/SpiritSpawnLocation
+	mob_spawn_location.progress_ratio = randf()
+	
+	game.spawn_mob(mob_spawn_location)
+
+func _on_score_timer_timeout():
+	game.set_score(game.get_score() + 1)
+"
+
+[sub_resource type="Curve2D" id="Curve2D_7sunq"]
+
+[sub_resource type="GDScript" id="GDScript_76bix"]
+script/source = "extends CanvasLayer
+
+signal restart_pressed
+
+func show_restart_button() -> void:
+	$Restart.show()
+	
+func hide_restart_button() -> void:
+	$Restart.hide()
+
+func _on_restart_button_pressed():
+	restart_pressed.emit()
+"
+
+[node name="DodgerServer" type="Node"]
+script = SubResource("GDScript_npuod")
+
+[node name="StartTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="SpiritTimer" type="Timer" parent="."]
+wait_time = 0.5
+
+[node name="ScoreTimer" type="Timer" parent="."]
+
+[node name="SpiritPath" type="Path2D" parent="."]
+curve = SubResource("Curve2D_7sunq")
+
+[node name="SpiritSpawnLocation" type="PathFollow2D" parent="SpiritPath"]
+
+[node name="HUD" type="CanvasLayer" parent="."]
+script = SubResource("GDScript_76bix")
+
+[node name="Restart" type="Button" parent="HUD"]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -210.0
+offset_right = 150.0
+offset_bottom = -110.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_fonts/font = ExtResource("1_253p8")
+theme_override_font_sizes/font_size = 64
+shortcut = ExtResource("2_ygj1b")
+text = "Restart"
+
+[connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
+[connection signal="timeout" from="SpiritTimer" to="." method="_on_spirit_timer_timeout"]
+[connection signal="timeout" from="ScoreTimer" to="." method="_on_score_timer_timeout"]
+[connection signal="restart_pressed" from="HUD" to="." method="new_game"]
+[connection signal="pressed" from="HUD/Restart" to="HUD" method="_on_restart_button_pressed"]
