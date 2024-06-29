@@ -22,7 +22,9 @@ RpcAwait="*res://addons/rpc-await/rpc_await.gd"
 [display]
 
 window/size/viewport_width=720
-window/size/viewport_height=1280
+window/size/viewport_height=960
+window/stretch/mode="viewport"
+window/stretch/aspect="expand"
 window/handheld/orientation=1
 
 [editor_plugins]
@@ -32,6 +34,10 @@ enabled=PackedStringArray("res://addons/rpc-await/plugin.cfg")
 [input_devices]
 
 pointing/emulate_touch_from_mouse=true
+
+[layer_names]
+
+2d_physics/layer_1="Default"
 
 [rendering]
 

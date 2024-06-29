@@ -2,7 +2,27 @@ How to set a control to the player?
 It seems that it's impossible to use scenes only in cases where it has graphics.
 As you cannot export custom classes only built-in, resourse and so on.
 
+Я хочу, чтобы последная стадия в следующей королевской битве была такой же
+как в этой игре (если остаются одни травоядные), но вопрос, откуда будут 
+появляться призраки, если карта тороидальная?
+Еще у меня идея для след игры:
+- Травоядные и хищники
+- Игра разделена на стадии где они эволюционирут, когда наберут подходящее число очков
+- Чтобы сэкономить время, они выбирают эволюционное дерево заранее перед игрой. 
+
+From Fedya:
+- должен ли игрок быть призраком в компететив?
+- Тороидальная карта?
+- Выше скорость перемещения?
+
+- Толкать друг друга
+- Спринт, ускоряшка
+- И выплавашки, уведмлялки что кто-то зашел и что делать 
+
 ToDo's:
+- Make animation smoother 
+- Draw beatiful background (Parallax)
+- Add "power-ups"
 - What if spirits actually catch the victim and hauling them somewhere?
 - What if players can also be spirits?
 - Add small pop-up showing when you click one "Connect" button and saying that 
@@ -85,6 +105,14 @@ It seems score is not synchronized when the player hust connected into running g
 The size of the world is set in the Host and there is a case when 
 another man plays on big device with better pixel quality for him
 there will be "gaps" (he will see how spirits are spawned)
+7) 
+Кажется, что используя tpc сооединение я делаю лаги в игре
+Чтобы это проверить надо играть с двух телефонов
+8)
+Лейбл текущего режима не обновляется
+9)
+Какой-то баг, когда чел отвалился или типа того, игра не рехостуется,
+постоянные "Game Over"
 
 Client 1:
 Character 1 + Movement Direction + Control

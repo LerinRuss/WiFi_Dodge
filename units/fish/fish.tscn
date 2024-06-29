@@ -37,11 +37,12 @@ height = 99.0
 
 [node name="Fish" type="RigidBody2D"]
 collision_mask = 0
+mass = 0.01
 script = ExtResource("1_x17wr")
 
 [node name="Animation" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_di06o")
-animation = &"walk"
+animation = &"swim"
 metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

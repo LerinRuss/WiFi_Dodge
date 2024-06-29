@@ -1,4 +1,5 @@
-class_name Player extends Area2D
+#class_name Player 
+extends Area2D
 
 signal hit
 
