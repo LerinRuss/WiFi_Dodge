@@ -6,7 +6,7 @@
 [sub_resource type="GDScript" id="GDScript_npuod"]
 script/source = "extends Node
 
-const MAX_CONNECTIONS = 2
+const MAX_CONNECTIONS = 5
 
 @export var game: Game
 var _game_over_predicate: Callable

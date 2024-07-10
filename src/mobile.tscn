@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://kyv8kapo5hia" path="res://src/core/core.tscn" id="1_2hxdg"]
 [ext_resource type="Script" path="res://src/mobile.gd" id="1_prfu7"]
-[ext_resource type="PackedScene" uid="uid://dg1y7d3lss2m3" path="res://src/joystick/hud_virtual_joystick.tscn" id="3_12v2a"]
+[ext_resource type="PackedScene" uid="uid://dg1y7d3lss2m3" path="res://scenes/control/FullScreen_Player_VJ_Control.tscn" id="3_12v2a"]
 
 [node name="Mobile" type="Node"]
 script = ExtResource("1_prfu7")

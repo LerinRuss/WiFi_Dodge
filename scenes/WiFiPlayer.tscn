@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://ba5wqudnfomds"]
 
 [ext_resource type="PackedScene" uid="uid://brx4k00jiuxv0" path="res://units/player/player.tscn" id="1_65n86"]
-[ext_resource type="PackedScene" uid="uid://dg1y7d3lss2m3" path="res://addons/joystick_control/FullScreen_VJ_Control.tscn" id="1_kq5m8"]
+[ext_resource type="PackedScene" uid="uid://te0g3i5aqpii" path="res://scenes/control/FullPlayerControl.tscn" id="1_xchpx"]
 
 [sub_resource type="GDScript" id="GDScript_grh33"]
 script/source = "extends Node
@@ -52,10 +52,6 @@ func set_controlable():
 	character_control.player = $Player
 	add_child(character_control)
 
-func set_camera():
-	pass
-	#add_child(Camera2D.new())
-
 func disable():
 	$Player.disable()
 	
@@ -84,7 +80,7 @@ properties/0/replication_mode = 1
 
 [node name="WiFiPlayer" type="Node"]
 script = SubResource("GDScript_grh33")
-character_control_scene = ExtResource("1_kq5m8")
+character_control_scene = ExtResource("1_xchpx")
 
 [node name="Player" parent="." instance=ExtResource("1_65n86")]
 position = Vector2(0, 0)
