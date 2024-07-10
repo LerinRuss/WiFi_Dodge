@@ -113,6 +113,8 @@ there will be "gaps" (he will see how spirits are spawned)
 9)
 Какой-то баг, когда чел отвалился или типа того, игра не рехостуется,
 постоянные "Game Over"
+10)
+Неправильно подтягивается counter когда клиент присоединился к "restart" игре
 
 Client 1:
 Character 1 + Movement Direction + Control

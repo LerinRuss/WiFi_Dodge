@@ -36,7 +36,7 @@ func _host():
 	multiplayer.peer_disconnected.connect(_on_client_disconnected)
 	
 	var peer = ENetMultiplayerPeer.new()
-	var error = peer.create_server(Game.PORT, MAX_CONNECTIONS)
+	var error = peer.create_server(GameControl.PORT, MAX_CONNECTIONS)
 	
 	if error:
 		return error
@@ -45,7 +45,7 @@ func _host():
 
 func _set_broadcast():
 	var advertiser: ServerAdvertiser = ServerAdvertiser.new()
-	advertiser.server_info = {\"port\": Game.PORT}
+	advertiser.server_info = {\"port\": GameControl.PORT}
 	
 	add_child(advertiser)
 
@@ -85,7 +85,8 @@ func _async_show_game_over_hud() -> void:
 	$HUD.show_restart_button()
 
 func _on_client_connected(id: int):
-	pass
+	print('DodgerServer. Client Connected.')
+	self.game.show_mode_remotely.rpc(self.game.game_mode)
 
 func _on_client_disconnected(id: int):
 	pass

@@ -6,6 +6,9 @@
 [sub_resource type="GDScript" id="GDScript_5k33x"]
 script/source = "extends CanvasLayer
 
+signal host_pressed
+signal connect_pressed
+
 func _ready():
 	for ip in IP.get_local_addresses():
 		if ip.begins_with('192.168'):
@@ -14,34 +17,10 @@ func _ready():
 			break
 
 func _on_host_pressed():
-	var game: Game = instantiate_game()
-	var server: Node = preload(\"res://scenes/DodgerServer.tscn\").instantiate()
-	server.game = game
-
-	self._pack_and_change(game, server)
-
+	self.host_pressed.emit()
 
 func _on_connect_pressed():
-	PhysicsServer2D.set_active(false) # TODO Are you sure it's okay to keep it in MainMenu?
-	var client: Node = preload(\"res://scenes/DodgerClient.tscn\").instantiate()
-	var game: Game = instantiate_game()
-	
-	self._pack_and_change(game, client)
-
-
-func _pack_and_change(game: Game, child: Node):	
-	game.add_child(child)
-	child.owner = game
-	
-	var scene = PackedScene.new()
-	assert(scene.pack(game) == OK)
-	
-	get_tree().change_scene_to_packed(scene)
-
-func instantiate_game() -> Game:
-	var game: Game = preload(\"res://scenes/Game.tscn\").instantiate()
-	
-	return game
+	self.connect_pressed.emit()
 "
 
 [node name="HUD Main Menu" type="CanvasLayer"]

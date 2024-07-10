@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://nodes/standalone/ServerListener.gd" id="1_2q5lg"]
 
 [sub_resource type="GDScript" id="GDScript_l7bq3"]
-script/source = "# REFACTOR it to remove it from tree and use it as utility class (withour _ready() method and 
+script/source = "# TODO REFACTOR it to remove it from tree and use it as utility class (withour _ready() method and 
 # Node inheritancy)
 extends Node
 

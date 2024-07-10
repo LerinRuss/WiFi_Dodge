@@ -2,14 +2,13 @@ class_name Game extends Node
 
 enum Mode {FIRST_OUT, LAST_ONE_STANDING, COOP}
 
-static var PORT = 7000
 static var MODS: Dictionary = {
 	Mode.FIRST_OUT: func (game: Game) -> bool: return game.check_first_out(),
 	Mode.LAST_ONE_STANDING: func (game: Game) -> bool: return game.check_last_one_standing(),
 	Mode.COOP: func (game: Game) -> bool: return game.check_coop()
 }
 
-@export var game_mode: Game.Mode = Game.Mode.values()[randi() % Game.Mode.size()]
+@export var game_mode: Game.Mode = -1 # as ny default is 0 that means the first from MODS
 
 const _player_scene = preload("res://scenes/WiFiPlayer.tscn")
 const _mob_scene: PackedScene = preload("res://scenes/WiFiMob.tscn")
@@ -20,7 +19,7 @@ var total_players_amount: int
 func _ready():
 	print('Game. Chosen Mode: ' + Mode.find_key(game_mode)
 			+ ' from the pool: ' + str(Mode.keys()))
-	_set_mode(game_mode)
+	_show_mode(game_mode)
 
 func check_first_out() -> bool:
 	return self.total_players_amount != self.get_players().size()
@@ -94,11 +93,11 @@ func set_score_remotely(score: int) -> void:
 	self.score = score
 	$"HUD".update_score(score)
 
-func _set_mode(mode: Game.Mode) -> void:
-	_set_mode_remotely.rpc(mode)
-	
-@rpc("authority", "call_local", "reliable")
-func _set_mode_remotely(mode: Game.Mode) -> void:
+@rpc("authority", "call_remote", "reliable")
+func show_mode_remotely(mode: Game.Mode) -> void:
+	$HUD.set_mode(mode)
+
+func _show_mode(mode: Game.Mode) -> void:
 	$HUD.set_mode(mode)
 
 func get_score() -> int:
