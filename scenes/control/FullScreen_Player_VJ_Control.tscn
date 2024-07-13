@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3 uid="uid://dg1y7d3lss2m3"]
+
+[ext_resource type="Script" path="res://scenes/control/FullScreen_Player_VJ_Control.gd" id="1_8v4c5"]
+[ext_resource type="PackedScene" uid="uid://dmr0fcamx7t56" path="res://addons/joystick/virtual_joystick.tscn" id="2_pa6up"]
+
+[node name="FullScreen_Player_VJ_Control" type="CanvasLayer"]
+script = ExtResource("1_8v4c5")
+
+[node name="Virtual Joystick" parent="." instance=ExtResource("2_pa6up")]
+visible = false
+anchors_preset = 15
+anchor_top = 0.0
+anchor_right = 1.0
+offset_top = 0.0
+offset_right = 0.0
+grow_horizontal = 2
+grow_vertical = 2
+joystick_mode = 2
+
+[node name="Base" parent="Virtual Joystick" index="0"]
+offset_left = -75.0
+offset_top = -75.0
+offset_right = 75.0
+offset_bottom = 75.0
+pivot_offset = Vector2(75, 75)
+expand_mode = 5
+
+[node name="Tip" parent="Virtual Joystick/Base" index="0"]
+offset_left = -37.5
+offset_top = -37.5
+offset_right = 37.5
+offset_bottom = 37.5
+pivot_offset = Vector2(37.5, 37.5)
+expand_mode = 1
+
+[editable path="Virtual Joystick"]

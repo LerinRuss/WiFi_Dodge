@@ -8,12 +8,12 @@ script/source = "extends Node
 
 const MAX_CONNECTIONS = 5
 
-@export var game: Game
+@export var game: Playfield
 var _game_over_predicate: Callable
 var _game_started: bool = false
 
 func _ready():
-	self._game_over_predicate = Game.MODS.get(game.game_mode)
+	self._game_over_predicate = Playfield.MODS.get(game.game_mode)
 	
 	var screen_size: Vector2 = get_viewport().get_visible_rect().size
 	$SpiritPath.curve.add_point(Vector2(0, 0))
@@ -85,7 +85,7 @@ func _async_show_game_over_hud() -> void:
 	$HUD.show_restart_button()
 
 func _on_client_connected(id: int):
-	print('DodgerServer. Client Connected.')
+	print('DodgerServer. Client Connected with id %s.' % id)
 	self.game.show_mode_remotely.rpc(self.game.game_mode)
 
 func _on_client_disconnected(id: int):
