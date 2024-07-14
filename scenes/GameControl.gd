@@ -6,10 +6,13 @@ func on_host_pressed():
 	var game: Playfield = _instantiate_game()
 	game.game_mode = Playfield.Mode.values()[randi() % Playfield.Mode.size()]
 	
+	var rpc_wrapper = GameRpcWrapper.new(game)
+	
 	var server: Node = preload("res://scenes/DodgerServer.tscn").instantiate()
-	server.game = game
+	server.name = 'ServerNode'
+	server.game_wrapper = rpc_wrapper
 
-	self._pack_together_and_change(game, [server])
+	self._pack_together_and_change(game, [server, rpc_wrapper])
 	print('GameControl. Host set up.')
 
 func on_connect_pressed():
@@ -46,7 +49,8 @@ func server_connected(server_listener: ServerListener):
 	
 	var game: Playfield = _instantiate_game()
 	game.game_mode = Playfield.Mode.FIRST_OUT
-	_pack_together_and_change(game, [])
+	
+	_pack_together_and_change(game, [GameRpcWrapper.new(game)])
 	
 	print('Game Control. Client is ready.')
 
@@ -58,6 +62,7 @@ func _pack_together_and_change(game: Playfield, nodes: Array[Node]):
 		node.owner = game
 	
 	assert(scene.pack(game) == OK)
+	ResourceSaver.save(scene, "res://my_packed_scene.tscn")
 	assert(get_tree().change_scene_to_packed(scene) == OK)
 	
 func _instantiate_game() -> Playfield:

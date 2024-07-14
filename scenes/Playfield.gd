@@ -17,11 +17,10 @@ const _mob_scene: PackedScene = preload("res://scenes/WiFiMob.tscn")
 var score: int
 var total_players_amount: int
 
-# TODO The mode can be showed from control class
 func _ready():
 	print('Playfield. Chosen Mode: ' + Mode.find_key(game_mode)
 			+ ' from the pool: ' + str(Mode.keys()))
-	_show_mode(game_mode)
+	show_mode(game_mode)
 
 func check_first_out() -> bool:
 	return self.total_players_amount != self.get_players().size()
@@ -53,53 +52,25 @@ func show_temp_message(text: String) -> Signal:
 	return $"HUD Temporary".show_temp_message(text)
 
 func show_message(text: String) -> void:
-	show_message_remotely.rpc(text)
-
-@rpc("authority", "call_local", "reliable")
-func show_message_remotely(text: String) -> void:
 	$"HUD Temporary".show_message(text)
 
 func play_music() -> void:
-	self.play_music_remotely.rpc()
-
-@rpc("authority", "call_local", "reliable")
-func play_music_remotely() -> void:
 	$Music.play()
 
 func stop_music() -> void:
-	self.stop_music_remotely.rpc()
-
-@rpc("authority", "call_local", "reliable")
-func stop_music_remotely() -> void:
 	$Music.stop()
 
 func play_sound() -> void:
-	self.play_sound_remotely.rpc()
-
-@rpc("authority", "call_local", "reliable")
-func play_sound_remotely() -> void:
 	$DeathSound.play()
 
 func stop_sound() -> void:
-	self.stop_sound_remotely.rpc()
-
-@rpc("authority", "call_local", "reliable")
-func stop_sound_remotely() -> void:
 	$DeathSound.stop()
 
 func set_score(score: int) -> void:
-	set_score_remotely.rpc(score)
-
-@rpc("authority", "call_local", "reliable")
-func set_score_remotely(score: int) -> void:
 	self.score = score
 	$"HUD".update_score(score)
 
-@rpc("authority", "call_remote", "reliable")
-func show_mode_remotely(mode: Playfield.Mode) -> void:
-	$HUD.set_mode(mode)
-
-func _show_mode(mode: Playfield.Mode) -> void:
+func show_mode(mode: Playfield.Mode) -> void:
 	$HUD.set_mode(mode)
 
 func get_score() -> int:
