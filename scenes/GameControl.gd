@@ -20,16 +20,35 @@ func on_connect_pressed():
 	var server_listener: ServerListener = ServerListener.new()
 	
 	add_child(server_listener)
-	server_listener.new_server.connect(self.server_found.bind(server_listener))
+	var server_info_catcher = Catcher.new()
+	
+	server_listener.new_server.connect(func(server_info): server_info_catcher.caught_obj = server_info)
 	
 	await server_listener.new_server
+	
+	print('GameControl. Caught Server Info is %s.' % server_info_catcher.caught_obj)
+	var server_info = server_info_catcher.caught_obj
+	multiplayer.multiplayer_peer = _instantiate_peer(server_info)
+	
+	multiplayer.connected_to_server.connect(func(): print("GameControl. Connecion client initialization is done."))
+	
+	await multiplayer.connected_to_server
+	
+	server_listener.queue_free()
+	
+	var game: Playfield = _instantiate_game()
+	game.game_mode = server_info.received_data["mode"]
+	
+	_pack_together_and_change(game, [GameRpcWrapper.new(game)])
+	
+	print('Game Control. Client is ready.')
 	print("GameControl. Await for the server is completed.")
 
-func server_found(server_info, server_listener: ServerListener):
+func _instantiate_peer(server_info):
 	assert(server_info.sender_ip != null)
 	assert(server_info.received_data != null 
-		and server_info.received_data.has("port")
-		and server_info.received_data.size() == 1)
+			and server_info.received_data.has("port"),
+		'Server Received Data: %s.' % server_info.received_data)
 	
 	print('DodgerClient. Received Data: '  + str(server_info.received_data))
 	print('DodgerClient. Sender IP: ' + str(server_info.sender_ip))
@@ -38,21 +57,7 @@ func server_found(server_info, server_listener: ServerListener):
 	var error = peer.create_client(server_info.sender_ip, server_info.received_data["port"])
 	
 	assert(!error)
-	multiplayer.multiplayer_peer = peer
-	
-	multiplayer.connected_to_server.connect(self.server_connected.bind(server_listener))
-	await multiplayer.connected_to_server
-	print("GameControl. Connecion client initialization is done.")
-
-func server_connected(server_listener: ServerListener):
-	server_listener.queue_free()
-	
-	var game: Playfield = _instantiate_game()
-	game.game_mode = Playfield.Mode.FIRST_OUT
-	
-	_pack_together_and_change(game, [GameRpcWrapper.new(game)])
-	
-	print('Game Control. Client is ready.')
+	return peer
 
 func _pack_together_and_change(game: Playfield, nodes: Array[Node]):
 	var scene = PackedScene.new()
@@ -67,3 +72,7 @@ func _pack_together_and_change(game: Playfield, nodes: Array[Node]):
 	
 func _instantiate_game() -> Playfield:
 	return preload("res://scenes/Playfield.tscn").instantiate()
+
+
+class Catcher extends RefCounted:
+	var caught_obj

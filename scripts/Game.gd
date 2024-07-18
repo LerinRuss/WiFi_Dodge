@@ -1,11 +1,6 @@
 class_name Game extends RefCounted
 
 enum Mode {FIRST_OUT, LAST_ONE_STANDING, COOP}
-static var MODS: Dictionary = {
-	Mode.FIRST_OUT: func (game: Game, players: int) -> bool: return game.total_players_amount != players,
-	Mode.LAST_ONE_STANDING: func (playfield: Playfield) -> bool: return playfield.check_last_one_standing(),
-	Mode.COOP: func (playfield: Playfield) -> bool: return playfield.check_coop()
-}
 
 const _player_scene: PackedScene = preload("res://scenes/WiFiPlayer.tscn")
 const _mob_scene: PackedScene = preload("res://scenes/WiFiMob.tscn")
@@ -34,17 +29,26 @@ func init_players(ids: PackedInt32Array) -> Array[Player]:
 	
 	return res
 
-func _check_first_out(players: int) -> bool:
-	return self.total_players_amount != players
+func process_game_over(current_players_amount: int):
+	match GAME_MODE:
+		Mode.FIRST_OUT:
+			return _check_first_out(current_players_amount)
+		Mode.LAST_ONE_STANDING:
+			return _check_last_one_standing(current_players_amount)
+		Mode.COOP:
+			return _check_coop(current_players_amount)
 
-func _check_last_one_standing(players: int) -> bool:
+func _check_first_out(current_players_amount: int) -> bool:
+	return self.total_players_amount != current_players_amount
+
+func _check_last_one_standing(current_players_amount: int) -> bool:
 	if self.total_players_amount == 1:
-		return self._check_first_out(players)
+		return self._check_first_out(current_players_amount)
 	
-	return players == 1
+	return current_players_amount == 1
 
-func _check_coop(players: int) -> bool:
-	return players == 0
+func _check_coop(current_players_amount: int) -> bool:
+	return current_players_amount == 0
 
 func _init_player(id: int) -> Player:
 	var player = _player_scene.instantiate()

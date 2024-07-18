@@ -1,3 +1,7 @@
+Remember:
+When you use Nodes to pack them into a PackedScene, don't forget to put default value
+to _init func if you use them. It's constrain of Godot 4.2
+
 How to set a control to the player?
 It seems that it's impossible to use scenes only in cases where it has graphics.
 As you cannot export custom classes only built-in, resourse and so on.

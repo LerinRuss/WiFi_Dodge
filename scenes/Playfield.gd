@@ -3,13 +3,7 @@ class_name Playfield extends Node
 
 enum Mode {FIRST_OUT, LAST_ONE_STANDING, COOP}
 
-static var MODS: Dictionary = {
-	Mode.FIRST_OUT: func (playfield: Playfield) -> bool: return playfield.check_first_out(),
-	Mode.LAST_ONE_STANDING: func (playfield: Playfield) -> bool: return playfield.check_last_one_standing(),
-	Mode.COOP: func (playfield: Playfield) -> bool: return playfield.check_coop()
-}
-
-@export var game_mode: Playfield.Mode = -1 # as ny default is 0 that means the first from MODS
+@export var game_mode: Mode = -1 # as the default is 0 that means the first from MODS
 
 const _player_scene = preload("res://scenes/WiFiPlayer.tscn")
 const _mob_scene: PackedScene = preload("res://scenes/WiFiMob.tscn")
@@ -17,10 +11,22 @@ const _mob_scene: PackedScene = preload("res://scenes/WiFiMob.tscn")
 var score: int
 var total_players_amount: int
 
+func _init(game_mode: Mode = -1):  # game_mode = -1 by default 'cause the default that's 0  means the first from MODS
+	self.game_mode = game_mode
+
 func _ready():
 	print('Playfield. Chosen Mode: ' + Mode.find_key(game_mode)
 			+ ' from the pool: ' + str(Mode.keys()))
 	show_mode(game_mode)
+
+func process_game_over():
+	match self.game_mode:
+		Mode.FIRST_OUT:
+			return check_first_out()
+		Mode.LAST_ONE_STANDING:
+			return check_last_one_standing()
+		Mode.COOP:
+			return check_coop()
 
 func check_first_out() -> bool:
 	return self.total_players_amount != self.get_players().size()

@@ -10,12 +10,9 @@ const MAX_CONNECTIONS = 5
 
 @export var game_wrapper: GameRpcWrapper
 var text: String
-var _game_over_predicate: Callable
 var _game_started: bool = false
 
 func _ready():
-	self._game_over_predicate = Playfield.MODS.get(self.game_wrapper.game.game_mode)
-	
 	var screen_size: Vector2 = get_viewport().get_visible_rect().size
 	$SpiritPath.curve.add_point(Vector2(0, 0))
 	$SpiritPath.curve.add_point(Vector2(screen_size.x, 0))
@@ -27,7 +24,7 @@ func _ready():
 	_set_broadcast()
 
 func _process(delta):
-	if _game_started and self._game_over_predicate.call(self.game_wrapper.game):
+	if _game_started and self.game_wrapper.game.process_game_over():
 		game_over()
 		
 		_game_started = false
@@ -46,7 +43,7 @@ func _host():
 
 func _set_broadcast():
 	var advertiser: ServerAdvertiser = ServerAdvertiser.new()
-	advertiser.server_info = {\"port\": GameControl.PORT}
+	advertiser.server_info = {\"port\": GameControl.PORT, \"mode\": self.game_wrapper.game.game_mode}
 	
 	add_child(advertiser)
 
@@ -87,7 +84,6 @@ func _async_show_game_over_hud() -> void:
 
 func _on_client_connected(id: int):
 	print('DodgerServer. Client Connected with id %s.' % id)
-	self.game_wrapper.show_mode.rpc(self.game_wrapper.game.game_mode)
 
 func _on_client_disconnected(id: int):
 	pass
