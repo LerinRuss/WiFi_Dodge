@@ -8,7 +8,10 @@ enum Mode {FIRST_OUT, LAST_ONE_STANDING, COOP}
 const _player_scene = preload("res://scenes/WiFiPlayer.tscn")
 const _mob_scene: PackedScene = preload("res://scenes/WiFiMob.tscn")
 
-var score: int
+var score: int:
+	set(value):
+		score = value
+		$"HUD".update_score(score)
 var total_players_amount: int
 
 func _init(game_mode: Mode = -1):  # game_mode = -1 by default 'cause the default that's 0  means the first from MODS
@@ -29,16 +32,16 @@ func process_game_over():
 			return check_coop()
 
 func check_first_out() -> bool:
-	return self.total_players_amount != self.get_players().size()
+	return self.total_players_amount != self.get_players_amount()
 
 func check_last_one_standing() -> bool:
 	if self.total_players_amount == 1:
 		return self.check_first_out()
 	
-	return self.get_players().size() == 1
+	return self.get_players_amount() == 1
 
 func check_coop() -> bool:
-	return self.get_players().size() == 0
+	return self.get_players_amount() == 0
 
 func arrange_players(ids: PackedInt32Array) -> void:
 	for id in ids:
@@ -72,21 +75,22 @@ func play_sound() -> void:
 func stop_sound() -> void:
 	$DeathSound.stop()
 
-func set_score(score: int) -> void:
-	self.score = score
-	$"HUD".update_score(score)
-
 func show_mode(mode: Playfield.Mode) -> void:
 	$HUD.set_mode(mode)
 
-func get_score() -> int:
-	return self.score
+func get_players_amount() -> int:
+	return $Players.get_children().size()
 
-func get_players() -> Array[Node]:
-	return $Players.get_children()
+func get_mobs_amount() -> int:
+	return $Mobs.get_children().size()
+	
+func free_players():
+	for player in $Players.get_children():
+		player.free()
 
-func get_mobs() -> Array[Node]:
-	return $Mobs.get_children()
+func free_mobs():
+	for mob in $Mobs.get_children():
+		mob.free()
 
 func _on_player_spawner_spawned(spawned_node):
 	var player = spawned_node

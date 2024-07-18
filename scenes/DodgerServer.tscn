@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://c6tpvvjjol81d"]
+[gd_scene load_steps=7 format=3 uid="uid://c6tpvvjjol81d"]
 
 [ext_resource type="FontFile" uid="uid://ggggasvo4rei" path="res://fonts/Xolonium-Regular.ttf" id="1_253p8"]
 [ext_resource type="Shortcut" uid="uid://dlypf33gwc5rl" path="res://shortcuts/start_game_shortcut.tres" id="2_ygj1b"]
+[ext_resource type="Script" path="res://nodes/ServerAdvertiser.gd" id="3_rkt5y"]
 
 [sub_resource type="GDScript" id="GDScript_npuod"]
 script/source = "extends Node
@@ -11,6 +12,12 @@ const MAX_CONNECTIONS = 5
 @export var game_wrapper: GameRpcWrapper
 var text: String
 var _game_started: bool = false
+@export var port: int
+@export var server_info: Dictionary: # Dictionary[String, Object]
+	get:
+		return $ServerAdvertiser.server_info
+	set(value):
+		$ServerAdvertiser.server_info = value
 
 func _ready():
 	var screen_size: Vector2 = get_viewport().get_visible_rect().size
@@ -21,7 +28,6 @@ func _ready():
 	
 	_host()
 	new_game()
-	_set_broadcast()
 
 func _process(delta):
 	if _game_started and self.game_wrapper.game.process_game_over():
@@ -34,26 +40,17 @@ func _host():
 	multiplayer.peer_disconnected.connect(_on_client_disconnected)
 	
 	var peer = ENetMultiplayerPeer.new()
-	var error = peer.create_server(GameControl.PORT, MAX_CONNECTIONS)
+	var error = peer.create_server(self.port, MAX_CONNECTIONS)
 	
 	if error:
 		return error
 	
 	multiplayer.multiplayer_peer = peer
 
-func _set_broadcast():
-	var advertiser: ServerAdvertiser = ServerAdvertiser.new()
-	advertiser.server_info = {\"port\": GameControl.PORT, \"mode\": self.game_wrapper.game.game_mode}
-	
-	add_child(advertiser)
-
 func new_game() -> void:
 	game_wrapper.set_score.rpc(0)
-	for rest_players in game_wrapper.game.get_players():
-		rest_players.queue_free()
-	
-	for rest_mobs in game_wrapper.game.get_mobs():
-		rest_mobs.queue_free()
+	game_wrapper.game.free_players()
+	game_wrapper.game.free_mobs()
 	
 	var ids: PackedInt32Array = multiplayer.get_peers()
 	ids.append(1)
@@ -99,7 +96,7 @@ func _on_spirit_timer_timeout():
 	game_wrapper.game.spawn_mob(mob_spawn_location)
 
 func _on_score_timer_timeout():
-	game_wrapper.set_score.rpc(game_wrapper.game.get_score() + 1)
+	game_wrapper.set_score.rpc(game_wrapper.game.score + 1)
 "
 
 [sub_resource type="Curve2D" id="Curve2D_7sunq"]
@@ -158,6 +155,9 @@ theme_override_fonts/font = ExtResource("1_253p8")
 theme_override_font_sizes/font_size = 64
 shortcut = ExtResource("2_ygj1b")
 text = "Restart"
+
+[node name="ServerAdvertiser" type="Node" parent="."]
+script = ExtResource("3_rkt5y")
 
 [connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
 [connection signal="timeout" from="SpiritTimer" to="." method="_on_spirit_timer_timeout"]

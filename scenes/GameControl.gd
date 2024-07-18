@@ -1,6 +1,6 @@
 class_name GameControl extends Node
 
-static var PORT = 7000
+const _PORT = 7000
 
 func on_host_pressed():
 	var game: Playfield = _instantiate_game()
@@ -11,6 +11,8 @@ func on_host_pressed():
 	var server: Node = preload("res://scenes/DodgerServer.tscn").instantiate()
 	server.name = 'ServerNode'
 	server.game_wrapper = rpc_wrapper
+	server.port = _PORT
+	server.server_info = {"port": _PORT, "mode": game.game_mode}
 
 	self._pack_together_and_change(game, [server, rpc_wrapper])
 	print('GameControl. Host set up.')

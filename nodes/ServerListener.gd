@@ -22,7 +22,8 @@ func _init():
 
 func _ready():
 	_known_servers.clear()
-	assert(_socket_udp.bind(listen_port) == OK)
+	var error: Error = _socket_udp.bind(listen_port)
+	assert(error == OK, str(error))
 
 func _process(delta):
 	if _socket_udp.get_available_packet_count() > 0:

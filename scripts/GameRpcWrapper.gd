@@ -30,7 +30,7 @@ func stop_sound() -> void:
 	
 @rpc("authority", "call_local", "reliable")
 func set_score(score: int) -> void:
-	self.game.set_score(score)
+	self.game.score = score
 
 @rpc("authority", "call_remote", "reliable")
 func show_mode(mode: Playfield.Mode) -> void:
