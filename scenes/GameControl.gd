@@ -69,7 +69,6 @@ func _pack_together_and_change(game: Playfield, nodes: Array[Node]):
 		node.owner = game
 	
 	assert(scene.pack(game) == OK)
-	ResourceSaver.save(scene, "res://my_packed_scene.tscn")
 	assert(get_tree().change_scene_to_packed(scene) == OK)
 	
 func _instantiate_game() -> Playfield:

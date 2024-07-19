@@ -56,12 +56,10 @@ func spawn_mob(mob_spawn_location: Node2D) -> void:
 	$Mobs.add_child(mob, true)
 
 func show_temp_message(text: String) -> Signal:
-	RpcAwait.send_rpc_all($"HUD Temporary".show_temp_message.bind(text))
-	
-	return $"HUD Temporary".show_temp_message(text)
+	return $"HUD Message".show_temp_message(text)
 
 func show_message(text: String) -> void:
-	$"HUD Temporary".show_message(text)
+	$"HUD Message".show_message(text)
 
 func play_music() -> void:
 	$Music.play()

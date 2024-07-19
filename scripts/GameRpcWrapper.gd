@@ -11,7 +11,11 @@ func _init(game:Playfield = null):
 @rpc("authority", "call_local", "reliable")
 func show_message(text: String) -> void:
 	self.game.show_message(text)
-	
+
+@rpc("authority", "call_remote", "reliable")
+func show_temp_message(text: String) -> Signal:
+	return self.game.show_temp_message(text)
+
 @rpc("authority", "call_local", "reliable")
 func play_music() -> void:
 	self.game.play_music()

@@ -58,8 +58,8 @@ func new_game() -> void:
 	
 	$StartTimer.start()
 	$HUD.hide_restart_button()
-	game_wrapper.set_score.rpc(0)
-	game_wrapper.game.show_temp_message(\"Get Ready\")
+	game_wrapper.show_temp_message.rpc(\"Get Ready\")
+	game_wrapper.show_temp_message(\"Get Ready\")
 	game_wrapper.play_music.rpc()
 	
 	_game_started = true
@@ -74,7 +74,8 @@ func game_over():
 	game_wrapper.play_sound.rpc()
 	
 func _async_show_game_over_hud() -> void:
-	await game_wrapper.game.show_temp_message(\"Game Over\")
+	game_wrapper.show_temp_message.rpc(\"Game Over\")
+	await game_wrapper.show_temp_message(\"Game Over\")
 	game_wrapper.show_message.rpc(\"Dodge the Creeps!\")
 	await get_tree().create_timer(1.0).timeout
 	$HUD.show_restart_button()
