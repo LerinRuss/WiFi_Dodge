@@ -3,6 +3,7 @@ class_name ServerListener extends Node
 
 signal new_server(server: ServerInfo)
 signal server_decayed(server: ServerInfo)
+signal socket_bound(error: Error)
 
 @export var listen_interval: int = 1
 @export var decay_duration: int = 3
@@ -23,7 +24,7 @@ func _init():
 func _ready():
 	_known_servers.clear()
 	var error: Error = _socket_udp.bind(listen_port)
-	assert(error == OK, str(error))
+	self.socket_bound.emit(error)
 
 func _process(delta):
 	if _socket_udp.get_available_packet_count() > 0:

@@ -7,7 +7,9 @@
 [sub_resource type="GDScript" id="GDScript_npuod"]
 script/source = "extends Node
 
-const MAX_CONNECTIONS = 5
+signal error_on_host_occured(error: Error)
+
+const _MAX_CONNECTIONS = 1
 
 @export var game_wrapper: GameRpcWrapper
 var text: String
@@ -26,8 +28,15 @@ func _ready():
 	$SpiritPath.curve.add_point(Vector2(screen_size.x, screen_size.y))
 	$SpiritPath.curve.add_point(Vector2(0, screen_size.y))
 	
-	_host()
+	var error: Error = _host()
+	
+	if (error != OK):
+		error_on_host_occured.emit(error)
+		
+		return
+
 	new_game()
+	$HUD.update_players_amount(self.multiplayer.get_peers().size(), _MAX_CONNECTIONS)
 
 func _process(delta):
 	if _game_started and self.game_wrapper.game.process_game_over():
@@ -35,17 +44,19 @@ func _process(delta):
 		
 		_game_started = false
 
-func _host():
+func _host() -> Error:
 	multiplayer.peer_connected.connect(_on_client_connected)
 	multiplayer.peer_disconnected.connect(_on_client_disconnected)
 	
 	var peer = ENetMultiplayerPeer.new()
-	var error = peer.create_server(self.port, MAX_CONNECTIONS)
+	var error: Error = peer.create_server(self.port, _MAX_CONNECTIONS)
 	
-	if error:
+	if error != OK:
 		return error
 	
 	multiplayer.multiplayer_peer = peer
+	
+	return OK
 
 func new_game() -> void:
 	game_wrapper.set_score.rpc(0)
@@ -82,9 +93,12 @@ func _async_show_game_over_hud() -> void:
 
 func _on_client_connected(id: int):
 	print('DodgerServer. Client Connected with id %s.' % id)
+	$HUD.update_players_amount(self.multiplayer.get_peers().size(), _MAX_CONNECTIONS)
 
 func _on_client_disconnected(id: int):
-	pass
+	print('DodgerServer. Client Disconnected with id %s.' % id)
+	self.game_wrapper.game.free_player(id)
+	$HUD.update_players_amount(self.multiplayer.get_peers().size(), _MAX_CONNECTIONS)
 
 func _on_start_timer_timeout():
 	$SpiritTimer.start()
@@ -107,11 +121,16 @@ script/source = "extends CanvasLayer
 
 signal restart_pressed
 
+const PLAYERS_AMOUNT_PATTERN = 'Connected: %s/%s'
+
 func show_restart_button() -> void:
 	$Restart.show()
 	
 func hide_restart_button() -> void:
 	$Restart.hide()
+
+func update_players_amount(new_amount: int, total_amount: int):
+	$\"Players Amount\".text = PLAYERS_AMOUNT_PATTERN % [new_amount, total_amount]
 
 func _on_restart_button_pressed():
 	restart_pressed.emit()
@@ -156,6 +175,13 @@ theme_override_fonts/font = ExtResource("1_253p8")
 theme_override_font_sizes/font_size = 64
 shortcut = ExtResource("2_ygj1b")
 text = "Restart"
+
+[node name="Players Amount" type="Label" parent="HUD"]
+offset_right = 121.0
+offset_bottom = 23.0
+theme_override_fonts/font = ExtResource("1_253p8")
+theme_override_font_sizes/font_size = 20
+text = "No connections"
 
 [node name="ServerAdvertiser" type="Node" parent="."]
 script = ExtResource("3_rkt5y")

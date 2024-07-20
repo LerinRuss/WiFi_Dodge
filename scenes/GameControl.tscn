@@ -1,12 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://b7wj6gqdpht7o"]
+[gd_scene load_steps=2 format=3 uid="uid://b7wj6gqdpht7o"]
 
 [ext_resource type="Script" path="res://scenes/GameControl.gd" id="1_d1mj6"]
-[ext_resource type="PackedScene" uid="uid://pgmbioirtwj0" path="res://scenes/MainMenu.tscn" id="1_m1uw1"]
 
 [node name="GameControl" type="Node"]
 script = ExtResource("1_d1mj6")
-
-[node name="HUD Main Menu" parent="." instance=ExtResource("1_m1uw1")]
-
-[connection signal="connect_pressed" from="HUD Main Menu" to="." method="on_connect_pressed"]
-[connection signal="host_pressed" from="HUD Main Menu" to="." method="on_host_pressed"]

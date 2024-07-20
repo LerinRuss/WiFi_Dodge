@@ -8,7 +8,7 @@ script/source = "extends Node
 
 signal body_entered(body: Node2D)
 
-@export var id = 1:
+@export var id = -1:
 	set(_id):
 		id = _id
 		$ClientSynchronizer.set_multiplayer_authority(_id)

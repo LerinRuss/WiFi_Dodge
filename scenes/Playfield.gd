@@ -1,5 +1,6 @@
-# TODO Can be removed when Playground is done
 class_name Playfield extends Node
+
+signal menu_button_pressed
 
 enum Mode {FIRST_OUT, LAST_ONE_STANDING, COOP}
 
@@ -90,6 +91,12 @@ func free_mobs():
 	for mob in $Mobs.get_children():
 		mob.free()
 
+func free_player(id: int):
+	for player in $Players.get_children():
+		if player.id == id:
+			self.total_players_amount = self.total_players_amount - 1
+			player.free()
+
 func _on_player_spawner_spawned(spawned_node):
 	var player = spawned_node
 	
@@ -124,3 +131,7 @@ func _init_mob(mob_spawn_location: Node2D) -> Node:
 	mob.screen_exited.connect(mob.queue_free)
 	
 	return mob
+
+
+func _on_hud_menu_button_pressed():
+	menu_button_pressed.emit()
