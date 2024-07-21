@@ -4,9 +4,11 @@ class_name GameControl extends Node
 
 const _PORT: int = 7000
 
+var _main_menu: MainMenu
+
 func _ready():
 	var menu: MainMenu = main_menu()
-	replace(menu)
+	replace_on_main_menu(menu)
 
 
 func on_host_pressed():
@@ -29,6 +31,7 @@ func on_host_pressed():
 
 func on_connect_pressed():
 	PhysicsServer2D.set_active(false)
+	self._main_menu.show_message("Trying to connect...")
 	var server_listener = ServerListener.new()
 	var server_listener_port_binding_await = Promise.new()
 	server_listener.socket_bound.connect(
@@ -128,7 +131,7 @@ func reset_state_and_replace_with_main_menu() -> MainMenu:
 		multiplayer.connected_to_server.disconnect(conn["callable"])
 	
 	var menu: MainMenu = main_menu()
-	replace(menu)
+	replace_on_main_menu(menu)
 	
 	return menu
 
@@ -140,6 +143,10 @@ func _bind_and_replace(nodes: Array[Node]):
 		wifi_game.add_child(node)
 	
 	replace(wifi_game)
+
+func replace_on_main_menu(main_menu: MainMenu):
+	self.replace(main_menu)
+	self._main_menu = main_menu
 
 func replace(new_scene: Node):
 	clean()
