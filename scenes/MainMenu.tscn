@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://pgmbioirtwj0"]
 
 [ext_resource type="Script" path="res://scenes/MainMenu.gd" id="1_2m06x"]
-[ext_resource type="FontFile" uid="uid://ggggasvo4rei" path="res://fonts/Xolonium-Regular.ttf" id="1_xgf8s"]
+[ext_resource type="FontFile" uid="uid://ggggasvo4rei" path="res://resources/fonts/Xolonium-Regular.ttf" id="1_xgf8s"]
 [ext_resource type="Shortcut" uid="uid://dlypf33gwc5rl" path="res://shortcuts/start_game_shortcut.tres" id="2_gv1ge"]
 [ext_resource type="PackedScene" uid="uid://b8rp2hocdnlwt" path="res://scenes/MessageLabel.tscn" id="3_81dru"]
 [ext_resource type="Texture2D" uid="uid://dfdt4u63rnrf3" path="res://resources/gear.svg" id="5_8cb7k"]
@@ -26,6 +26,7 @@ custom_minimum_size = Vector2(300, 50)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
+theme_override_fonts/font = ExtResource("1_xgf8s")
 theme_override_font_sizes/font_size = 40
 text = "Here is IP address"
 
