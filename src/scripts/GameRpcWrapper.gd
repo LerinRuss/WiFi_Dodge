@@ -7,6 +7,10 @@ func _init(game:Playfield = null):
 	
 	self.name = 'GameRpcWrapper'
 
+func show_temp_message_and_locally(text: String) -> Signal:
+	self.show_temp_message.rpc(text)
+	
+	return self.show_temp_message(text)
 
 @rpc("authority", "call_local", "reliable")
 func show_message(text: String) -> void:
@@ -35,7 +39,3 @@ func stop_sound() -> void:
 @rpc("authority", "call_local", "reliable")
 func set_score(score: int) -> void:
 	self.game.score = score
-
-@rpc("authority", "call_remote", "reliable")
-func show_mode(mode: Playfield.Mode) -> void:
-	self.game.show_mode(mode)

@@ -85,8 +85,7 @@ func game_over():
 	game_wrapper.play_sound.rpc()
 	
 func _async_show_game_over_hud() -> void:
-	game_wrapper.show_temp_message.rpc(\"Game Over\")
-	await game_wrapper.show_temp_message(\"Game Over\")
+	await game_wrapper.show_temp_message_and_locally(\"Game Over\")
 	game_wrapper.show_message.rpc(\"Dodge the Creeps!\")
 	await get_tree().create_timer(1.0).timeout
 	$HUD.show_restart_button()
