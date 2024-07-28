@@ -2,7 +2,7 @@
 
 [ext_resource type="FontFile" uid="uid://ggggasvo4rei" path="res://resources/fonts/Xolonium-Regular.ttf" id="1_253p8"]
 [ext_resource type="Shortcut" uid="uid://dlypf33gwc5rl" path="res://resources/shortcuts/start_game_shortcut.tres" id="2_ygj1b"]
-[ext_resource type="Script" path="res://nodes/ServerAdvertiser.gd" id="3_rkt5y"]
+[ext_resource type="Script" path="res://src/nodes/ServerAdvertiser.gd" id="3_rkt5y"]
 
 [sub_resource type="GDScript" id="GDScript_npuod"]
 script/source = "extends Node
