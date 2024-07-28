@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://b7wj6gqdpht7o"]
-
-[ext_resource type="Script" path="res://scenes/GameControl.gd" id="1_d1mj6"]
-
-[node name="GameControl" type="Node"]
-script = ExtResource("1_d1mj6")
