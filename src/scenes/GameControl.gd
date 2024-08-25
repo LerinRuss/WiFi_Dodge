@@ -24,7 +24,11 @@ func on_host_pressed():
 	server.port = _PORT
 	server.server_info = {"port": _PORT, "mode": game.game_mode}
 	
-	server.error_on_host_occured.connect(self.on_host_server_error)
+	server.error_on_host_occured.connect(
+		func on_host_server_error(error: Error):
+			var menu: MainMenu = self.reset_state_and_replace_with_main_menu()
+	
+			menu.show_error_temp_message("Server couldn't be set up. Error code is %s." % error))
 
 	self._bind_and_replace([game, server, rpc_wrapper])
 	print('GameControl. Host set up.')
@@ -32,6 +36,8 @@ func on_host_pressed():
 func on_connect_pressed():
 	PhysicsServer2D.set_active(false)
 	self._main_menu.show_message("Trying to connect...")
+	
+	# Server Listener binding
 	var server_listener = ServerListener.new()
 	var server_listener_port_binding_await = Promise.new()
 	server_listener.socket_bound.connect(
@@ -51,16 +57,22 @@ func on_connect_pressed():
 		
 		return
 	
+	# Server Listener getting server info
 	var server_info_catcher = Catcher.new()
 	
-	server_listener.new_server.connect(func(server_info): server_info_catcher.caught_obj = server_info)
+	server_listener.new_server.connect(
+		func(server_info: ServerListener.ServerInfo): server_info_catcher.caught_obj = server_info)
 	
 	await server_listener.new_server
 	
 	print('GameControl. Caught Server Info is %s.' % server_info_catcher.caught_obj)
 	var server_info: ServerListener.ServerInfo = server_info_catcher.caught_obj
 	
-	multiplayer.server_disconnected.connect(self.on_server_disconnected)
+	# Multiplayer connecting the server peer
+	multiplayer.server_disconnected.connect(
+		func (): 
+			var menu: MainMenu = self.reset_state_and_replace_with_main_menu()
+			menu.show_error_temp_message("Server disconnected."))
 	var connection_await = Promise.new()
 	multiplayer.connected_to_server.connect(
 		func(): 
@@ -71,7 +83,8 @@ func on_connect_pressed():
 	
 	assert(server_info.sender_ip != null)
 	assert(server_info.received_data != null 
-			and server_info.received_data.has("port"),
+			and server_info.received_data.has("port")
+			and server_info.received_data.has("mode"),
 		'Server Received Data: %s.' % server_info.received_data)
 	
 	print('GameControl. Received Data: '  + str(server_info.received_data))
@@ -96,6 +109,7 @@ func on_connect_pressed():
 	
 	server_listener.queue_free()
 	
+	# WiFi Game Instantiating the game
 	var game: Playfield = _instantiate_game()
 	game.game_mode = server_info.received_data["mode"]
 	
@@ -159,18 +173,10 @@ func clean():
 func _instantiate_game() -> Playfield:
 	var game: Playfield = preload("res://src/scenes/Playfield.tscn").instantiate()
 	game.menu_button_pressed.connect(self.reset_state_and_replace_with_main_menu)
+	game.player_scene = Constants.Preloaded.PLAYER_SCENE
+	game.mob_scene = Constants.Preloaded.MOB_SCENE
 	
 	return game
-
-func on_server_disconnected():
-	var menu: MainMenu = self.reset_state_and_replace_with_main_menu()
-	
-	menu.show_error_temp_message("Server disconnected.")
-
-func on_host_server_error(error: Error):
-	var menu: MainMenu = self.reset_state_and_replace_with_main_menu()
-	
-	menu.show_error_temp_message("Server couldn't be set up. Error code is %s." % error)
 
 class Catcher extends RefCounted:
 	var caught_obj

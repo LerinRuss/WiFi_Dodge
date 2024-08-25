@@ -5,9 +5,8 @@ signal menu_button_pressed
 enum Mode {FIRST_OUT, LAST_ONE_STANDING, COOP}
 
 @export var game_mode: Mode = -1 # as the default is 0 that means the first from MODS
-
-var _PLAYER_SCENE: PackedScene = Constants.Preloaded.PLAYER_SCENE
-var _MOB_SCENE: PackedScene = Constants.Preloaded.MOB_SCENE
+@export var player_scene: PackedScene
+@export var mob_scene: PackedScene
 
 var score: int:
 	set(value):
@@ -23,7 +22,7 @@ func _ready():
 			+ ' from the pool: ' + str(Mode.keys()))
 	show_mode(game_mode)
 
-func process_game_over():
+func process_game_over(): # -> bool:
 	match self.game_mode:
 		Mode.FIRST_OUT:
 			return check_first_out()
@@ -112,7 +111,7 @@ func _on_player_spawner_despawned(node):
 	pass
 
 func _init_player(id: int):
-	var player = _PLAYER_SCENE.instantiate()
+	var player = player_scene.instantiate()
 	player.id = id
 	
 	var size: Vector2 = player.get_shape_boundaries().size
@@ -124,7 +123,7 @@ func _init_player(id: int):
 	return player
 
 func _init_mob(mob_spawn_location: Node2D) -> Node:
-	var mob = _MOB_SCENE.instantiate()
+	var mob = mob_scene.instantiate()
 	mob.speed = randf_range(150.0, 250.0)
 	mob.position = mob_spawn_location.position
 	mob.vector_step = Vector2.RIGHT.rotated(mob_spawn_location.rotation + PI / 2 + randf_range(-PI / 4, PI / 4))
