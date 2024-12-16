@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://ba5wqudnfomds"]
 
-[ext_resource type="PackedScene" uid="uid://brx4k00jiuxv0" path="res://src/units/player/player.tscn" id="1_65n86"]
 [ext_resource type="PackedScene" uid="uid://te0g3i5aqpii" path="res://src/scenes/control/FullPlayerControl.tscn" id="1_xchpx"]
+[ext_resource type="PackedScene" uid="uid://cottft2ehstys" path="res://src/units/player/player_fish.tscn" id="2_acj42"]
 
 [sub_resource type="GDScript" id="GDScript_grh33"]
 script/source = "extends Node
@@ -37,11 +37,11 @@ func _process(delta):
 func get_shape_boundaries() -> Rect2:
 	return $Player.get_shape_boundaries()
 	
-func set_dark_grey_animator():
-	$Player.set_dark_grey_animator()
+func set_subordinate_animator():
+	$Player.set_subordinate_animator()
 	
-func set_grey_animator():
-	$Player.set_grey_animator()
+func set_main_animator():
+	$Player.set_main_animator()
 
 
 func _on_player_body_entered(body: Node2D):
@@ -82,7 +82,7 @@ properties/0/replication_mode = 1
 script = SubResource("GDScript_grh33")
 character_control_scene = ExtResource("1_xchpx")
 
-[node name="Player" parent="." instance=ExtResource("1_65n86")]
+[node name="Player" parent="." instance=ExtResource("2_acj42")]
 position = Vector2(0, 0)
 
 [node name="ServerSynchronizer" type="MultiplayerSynchronizer" parent="."]

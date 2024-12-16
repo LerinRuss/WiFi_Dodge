@@ -15,11 +15,11 @@ func _process(delta):
 		position = position.clamp(Vector2.ZERO, get_viewport_rect().size)
 		rotation = step_vector.angle() + PI/2
 
-func set_grey_animator():
-	$Animation.animation = 'light'
+func set_main_animator():
+	$Animation.animation = 'main'
 
-func set_dark_grey_animator():
-	$Animation.animation = 'dark'
+func set_subordinate_animator():
+	$Animation.animation = 'subordinate'
 
 func get_shape_boundaries() -> Rect2:
 	return $CollisionShape2D.shape.get_rect()

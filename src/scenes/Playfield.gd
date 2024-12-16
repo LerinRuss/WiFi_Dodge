@@ -52,7 +52,12 @@ func arrange_players(ids: PackedInt32Array) -> void:
 	self.total_players_amount = ids.size()
 
 func spawn_mob(mob_spawn_location: Node2D) -> void:
-	var mob: Node = self._init_mob(mob_spawn_location)
+	var mob = mob_scene.instantiate()
+	mob.speed = randf_range(150.0, 250.0)
+	mob.position = mob_spawn_location.position
+	mob.vector_step = Vector2.RIGHT.rotated(mob_spawn_location.rotation + PI / 2 + randf_range(-PI / 4, PI / 4))
+	mob.screen_exited.connect(mob.queue_free)
+
 	$Mobs.add_child(mob, true)
 
 func show_temp_message(text: String) -> Signal:
@@ -100,12 +105,12 @@ func _on_player_spawner_spawned(spawned_node):
 	var player = spawned_node
 	
 	if player.id != multiplayer.get_unique_id():
-		player.set_dark_grey_animator()
+		player.set_subordinate_animator()
 		
 		return
 	
 	player.set_controlable()
-	player.set_grey_animator()
+	player.set_main_animator()
 
 func _on_player_spawner_despawned(node):
 	pass
@@ -121,16 +126,6 @@ func _init_player(id: int):
 	player.body_entered.connect(func(body): player.queue_free())
 	
 	return player
-
-func _init_mob(mob_spawn_location: Node2D) -> Node:
-	var mob = mob_scene.instantiate()
-	mob.speed = randf_range(150.0, 250.0)
-	mob.position = mob_spawn_location.position
-	mob.vector_step = Vector2.RIGHT.rotated(mob_spawn_location.rotation + PI / 2 + randf_range(-PI / 4, PI / 4))
-	mob.screen_exited.connect(mob.queue_free)
-	
-	return mob
-
 
 func _on_hud_menu_button_pressed():
 	menu_button_pressed.emit()

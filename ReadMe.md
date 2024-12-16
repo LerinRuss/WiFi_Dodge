@@ -134,7 +134,7 @@ Character 2 + Movement Direction + Updater
 
 Steps to export Project
 - Remove old "Exports" from Export folder
-- Export desirible build
+- Export desirible build in `Project -> Export`
 - Upload it to itch.io
 
 Acronyms:

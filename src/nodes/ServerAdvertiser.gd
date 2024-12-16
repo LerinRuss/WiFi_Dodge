@@ -7,6 +7,7 @@ class_name ServerAdvertiser extends Node
 @export var broadcast_port: int = 3111
 @export var broadcast_interval: float = 1.0
  
+# Dictionary[String, Object]
 var server_info: Dictionary = {"name": "LAN Game"}
 var _socket_udp = PacketPeerUDP.new()
 
