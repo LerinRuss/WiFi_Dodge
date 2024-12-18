@@ -21,7 +21,7 @@ func _ready():
 	print('Playfield. Chosen Mode: ' + Mode.find_key(game_mode)
 			+ ' from the pool: ' + str(Mode.keys()))
 	show_mode(game_mode)
-
+	
 func process_game_over(): # -> bool:
 	match self.game_mode:
 		Mode.FIRST_OUT:

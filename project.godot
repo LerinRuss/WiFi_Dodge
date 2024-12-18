@@ -22,9 +22,10 @@ ToastParty="*res://addons/toastparty/toast-autoload.gd"
 
 [display]
 
+window/size/viewport_width=600
+window/size/viewport_height=800
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
-window/stretch/scale_mode="integer"
 window/handheld/orientation=1
 
 [editor_plugins]

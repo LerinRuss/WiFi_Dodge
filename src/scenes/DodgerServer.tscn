@@ -17,13 +17,7 @@ var text: String
 var _game_started: bool = false
 
 func _ready():
-	var screen_size: Vector2 = get_viewport().get_visible_rect().size
-	
-	#$ServerAdvertiser.server_info = {
-		#\"port\": _PORT, 
-		#\"mode\": game_wrapper.game.game_mode,
-		#\"screen_size\": screen_size
-	#}
+	var screen_size: Vector2 = Utils.get_screen_size(self)
 	$ServerAdvertiser.server_info = ServerConnectionInfo\\
 		.new(_PORT, game_wrapper.game.game_mode, screen_size)\\
 		.to_dictionary()
@@ -148,6 +142,7 @@ wait_time = 2.0
 one_shot = true
 
 [node name="SpiritTimer" type="Timer" parent="."]
+process_mode = 4
 wait_time = 0.5
 
 [node name="ScoreTimer" type="Timer" parent="."]

@@ -102,6 +102,12 @@ func on_connect_pressed():
 	var game: Playfield = _instantiate_game()
 	game.game_mode = server_conn_info.mode
 	
+	var original_size: Vector2 = Utils.get_screen_size(self)
+	print("GameControl. Server Size. Size %s." % server_conn_info.screen_size)
+	print("GameControl. Original Size. Size %s." % original_size)
+	var scale: Vector2 = original_size / server_conn_info.screen_size
+	get_viewport().canvas_transform = get_viewport().canvas_transform.scaled(scale)
+	
 	_bind_and_replace(game, GameRpcWrapper.new(game), [])
 	
 	print('Game Control. Client is ready.')
