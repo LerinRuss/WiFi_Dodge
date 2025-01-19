@@ -28,6 +28,9 @@ func on_host_pressed():
 func on_connect_pressed():
 	PhysicsServer2D.set_active(false)
 	
+	var omenu: MainMenu = self.reset_state_and_replace_with_main_menu()
+	omenu._show_message("Trying to connect...")
+	
 	# Server Listener binding
 	var server_listener = ServerListener.new()
 	var server_listener_port_binding_await = Promise.new()
@@ -107,6 +110,7 @@ func on_connect_pressed():
 	print("GameControl. Original Size. Size %s." % original_size)
 	var scale: Vector2 = original_size / server_conn_info.screen_size
 	get_viewport().canvas_transform = get_viewport().canvas_transform.scaled(scale)
+	print("GameControl. New Original Size. Size %s." % Utils.get_screen_size(self))
 	
 	_bind_and_replace(game, GameRpcWrapper.new(game), [])
 	
@@ -131,6 +135,8 @@ func reset_state_and_replace_with_main_menu() -> MainMenu:
 	
 	for conn: Dictionary in multiplayer.connected_to_server.get_connections():
 		multiplayer.connected_to_server.disconnect(conn["callable"])
+		
+	get_viewport().canvas_transform = Transform2D.IDENTITY
 	
 	return replace_on_main_menu()
 
