@@ -7,6 +7,7 @@ enum Mode {FIRST_OUT, LAST_ONE_STANDING, COOP}
 @export var game_mode: Mode = -1 # as the default is 0 that means the first from MODS
 @export var player_scene: PackedScene
 @export var mob_scene: PackedScene
+@export var game_border: Vector2
 
 var score: int:
 	set(value):
@@ -117,6 +118,7 @@ func _on_player_spawner_despawned(node):
 
 func _init_player(id: int):
 	var player = player_scene.instantiate()
+	player.logic = EntityLogic.new(Rect2(Vector2.ZERO, game_border))
 	player.id = id
 	
 	var size: Vector2 = player.get_shape_boundaries().size

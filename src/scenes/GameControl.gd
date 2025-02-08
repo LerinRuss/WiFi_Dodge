@@ -2,6 +2,9 @@
 # Auxiliary Nodes can be added but should be removed after their completion
 class_name GameControl extends Node
 
+# Here should be fields only shared between all possible sub nodes 
+# (e.g. main menu, server, client and so on)
+
 func _ready():
 	replace_on_main_menu()
 
@@ -9,6 +12,7 @@ func on_host_pressed():
 	PhysicsServer2D.set_active(true)
 	var game: Playfield = _instantiate_game()
 	game.game_mode = Playfield.Mode.values()[randi() % Playfield.Mode.size()]
+	game.game_border = Utils.get_screen_size(self)
 	
 	var rpc_wrapper = GameRpcWrapper.new(game)
 	
@@ -104,6 +108,7 @@ func on_connect_pressed():
 	# WiFi Game Instantiating the game
 	var game: Playfield = _instantiate_game()
 	game.game_mode = server_conn_info.mode
+	game.game_border = server_conn_info.screen_size
 	
 	var original_size: Vector2 = Utils.get_screen_size(self)
 	print("GameControl. Server Size. Size %s." % server_conn_info.screen_size)
