@@ -9,7 +9,6 @@ func _on_host_pressed():
 	self.host_pressed.emit()
 	
 func _on_connect_pressed():
-	self._show_message("Trying to connect...")
 	self.connect_pressed.emit()
 	
 func _on_host_settings_pressed():

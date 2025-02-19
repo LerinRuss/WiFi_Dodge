@@ -24,6 +24,9 @@ signal body_entered(body: Node2D)
 	get:
 		return self.player.step_vector
 @export var character_control_scene: PackedScene
+var logic: EntityLogic:
+	set(logic):
+		$Player.logic = logic
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
