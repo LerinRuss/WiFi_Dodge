@@ -2,27 +2,23 @@
 # Auxiliary Nodes can be added but should be removed after their completion
 class_name GameControl extends Node
 
-const _PORT: int = 7000
-
-var _main_menu: MainMenu
+# Here should be fields only shared between all possible sub nodes 
+# (e.g. main menu, server, client and so on)
 
 func _ready():
-	var menu: MainMenu = main_menu()
-	replace_on_main_menu(menu)
-
+	replace_on_main_menu()
 
 func on_host_pressed():
 	PhysicsServer2D.set_active(true)
 	var game: Playfield = _instantiate_game()
 	game.game_mode = Playfield.Mode.values()[randi() % Playfield.Mode.size()]
+	game.game_border = Utils.get_screen_size(self)
 	
 	var rpc_wrapper = GameRpcWrapper.new(game)
 	
-	var server: Node = Constants.Preloaded.DODGER_SERVER.instantiate()
+	var server: Node = Utils.Preloaded.DODGER_SERVER.instantiate()
 	server.name = 'ServerNode'
 	server.game_wrapper = rpc_wrapper
-	server.port = _PORT
-	server.server_info = {"port": _PORT, "mode": game.game_mode}
 	
 	server.error_on_host_occured.connect(
 		func on_host_server_error(error: Error):
@@ -30,12 +26,14 @@ func on_host_pressed():
 	
 			menu.show_error_temp_message("Server couldn't be set up. Error code is %s." % error))
 
-	self._bind_and_replace([game, server, rpc_wrapper])
+	self._bind_and_replace(game, rpc_wrapper, [server])
 	print('GameControl. Host set up.')
 
 func on_connect_pressed():
 	PhysicsServer2D.set_active(false)
-	self._main_menu.show_message("Trying to connect...")
+	
+	var omenu: MainMenu = self.reset_state_and_replace_with_main_menu()
+	omenu._show_message("Trying to connect...")
 	
 	# Server Listener binding
 	var server_listener = ServerListener.new()
@@ -72,7 +70,7 @@ func on_connect_pressed():
 	multiplayer.server_disconnected.connect(
 		func (): 
 			var menu: MainMenu = self.reset_state_and_replace_with_main_menu()
-			menu.show_error_temp_message("Server disconnected."))
+			menu.show_error_temp_message("The server's been shut down."))
 	var connection_await = Promise.new()
 	multiplayer.connected_to_server.connect(
 		func(): 
@@ -82,14 +80,12 @@ func on_connect_pressed():
 			"Connection Failed. The server is full or not started."))
 	
 	assert(server_info.sender_ip != null)
-	assert(server_info.received_data != null 
-			and server_info.received_data.has("port")
-			and server_info.received_data.has("mode"),
-		'Server Received Data: %s.' % server_info.received_data)
 	
 	print('GameControl. Received Data: '  + str(server_info.received_data))
 	print('GameControl. Sender IP: ' + str(server_info.sender_ip))
-	var res = Client.instantiate_peer(server_info.sender_ip, server_info.received_data["port"])
+	var server_conn_info: ServerConnectionInfo = ServerConnectionInfo.from_data(server_info.received_data)
+	
+	var res = Client.instantiate_peer(server_info.sender_ip, server_conn_info.port)
 	
 	if res is Client.Error:
 		var main_menu: MainMenu = reset_state_and_replace_with_main_menu()
@@ -111,19 +107,20 @@ func on_connect_pressed():
 	
 	# WiFi Game Instantiating the game
 	var game: Playfield = _instantiate_game()
-	game.game_mode = server_info.received_data["mode"]
+	game.game_mode = server_conn_info.mode
+	game.game_border = server_conn_info.screen_size
 	
-	_bind_and_replace([game, GameRpcWrapper.new(game)])
+	var original_size: Vector2 = Utils.get_screen_size(self)
+	print("GameControl. Server Size. Size %s." % server_conn_info.screen_size)
+	print("GameControl. Original Size. Size %s." % original_size)
+	var scale: Vector2 = original_size / server_conn_info.screen_size
+	get_viewport().canvas_transform = get_viewport().canvas_transform.scaled(scale)
+	print("GameControl. New Original Size. Size %s." % Utils.get_screen_size(self))
+	
+	_bind_and_replace(game, GameRpcWrapper.new(game), [])
 	
 	print('Game Control. Client is ready.')
 	print("GameControl. Await for the server is completed.")
-
-func main_menu() -> MainMenu:
-	var main_menu: Node = preload("res://src/scenes/MainMenu.tscn").instantiate()
-	main_menu.connect_pressed.connect(self.on_connect_pressed)
-	main_menu.host_pressed.connect(self.on_host_pressed)
-	
-	return main_menu
 
 func reset_state_and_replace_with_main_menu() -> MainMenu:
 	PhysicsServer2D.set_active(true)
@@ -133,7 +130,7 @@ func reset_state_and_replace_with_main_menu() -> MainMenu:
 		multiplayer.server_disconnected.disconnect(conn["callable"])
 		
 	for conn: Dictionary in multiplayer.peer_disconnected .get_connections():
-		multiplayer.peer_disconnected .disconnect(conn["callable"])
+		multiplayer.peer_disconnected.disconnect(conn["callable"])
 	
 	for conn: Dictionary in multiplayer.peer_connected.get_connections():
 		multiplayer.peer_connected.disconnect(conn["callable"])
@@ -143,38 +140,41 @@ func reset_state_and_replace_with_main_menu() -> MainMenu:
 	
 	for conn: Dictionary in multiplayer.connected_to_server.get_connections():
 		multiplayer.connected_to_server.disconnect(conn["callable"])
+		
+	get_viewport().canvas_transform = Transform2D.IDENTITY
 	
-	var menu: MainMenu = main_menu()
-	replace_on_main_menu(menu)
-	
-	return menu
+	return replace_on_main_menu()
 
-func _bind_and_replace(nodes: Array[Node]):
+func _bind_and_replace(game: Playfield, game_rpc_wrapper: GameRpcWrapper, nodes: Array[Node]):
 	var wifi_game: Node = Node.new()
 	wifi_game.name = 'WiFiGame'
 	
+	wifi_game.add_child(game)
+	wifi_game.add_child(game_rpc_wrapper)
 	for node: Node in nodes:
 		wifi_game.add_child(node)
 	
 	replace(wifi_game)
 
-func replace_on_main_menu(main_menu: MainMenu):
+func replace_on_main_menu() -> MainMenu:
+	var main_menu: Node = preload("res://src/scenes/MainMenu.tscn").instantiate()
+	main_menu.connect_pressed.connect(self.on_connect_pressed)
+	main_menu.host_pressed.connect(self.on_host_pressed)
+	
 	self.replace(main_menu)
-	self._main_menu = main_menu
+	
+	return main_menu
 
 func replace(new_scene: Node):
-	clean()
-	add_child(new_scene)
-
-func clean():
 	for child in get_children():
 		child.queue_free()
+	add_child(new_scene)
 
 func _instantiate_game() -> Playfield:
 	var game: Playfield = preload("res://src/scenes/Playfield.tscn").instantiate()
 	game.menu_button_pressed.connect(self.reset_state_and_replace_with_main_menu)
-	game.player_scene = Constants.Preloaded.PLAYER_SCENE
-	game.mob_scene = Constants.Preloaded.MOB_SCENE
+	game.player_scene = Utils.Preloaded.PLAYER_SCENE
+	game.mob_scene = Utils.Preloaded.MOB_SCENE
 	
 	return game
 

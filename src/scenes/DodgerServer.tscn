@@ -10,19 +10,18 @@ script/source = "extends Node
 signal error_on_host_occured(error: Error)
 
 const _MAX_CONNECTIONS = 1
+const _PORT: int = 7000
 
 @export var game_wrapper: GameRpcWrapper
 var text: String
 var _game_started: bool = false
-@export var port: int
-@export var server_info: Dictionary: # Dictionary[String, Object]
-	get:
-		return $ServerAdvertiser.server_info
-	set(value):
-		$ServerAdvertiser.server_info = value
 
 func _ready():
-	var screen_size: Vector2 = get_viewport().get_visible_rect().size
+	var screen_size: Vector2 = Utils.get_screen_size(self)
+	$ServerAdvertiser.server_info = ServerConnectionInfo\\
+		.new(_PORT, game_wrapper.game.game_mode, screen_size)\\
+		.to_dictionary()
+	
 	$SpiritPath.curve.add_point(Vector2(0, 0))
 	$SpiritPath.curve.add_point(Vector2(screen_size.x, 0))
 	$SpiritPath.curve.add_point(Vector2(screen_size.x, screen_size.y))
@@ -49,7 +48,7 @@ func _host() -> Error:
 	multiplayer.peer_disconnected.connect(_on_client_disconnected)
 	
 	var peer = ENetMultiplayerPeer.new()
-	var error: Error = peer.create_server(self.port, _MAX_CONNECTIONS)
+	var error: Error = peer.create_server(self._PORT, _MAX_CONNECTIONS)
 	
 	if error != OK:
 		return error
@@ -176,8 +175,10 @@ shortcut = ExtResource("2_ygj1b")
 text = "Restart"
 
 [node name="Players Amount" type="Label" parent="HUD"]
-offset_right = 121.0
-offset_bottom = 23.0
+offset_left = 25.0
+offset_top = 34.0
+offset_right = 189.0
+offset_bottom = 59.0
 theme_override_fonts/font = ExtResource("1_253p8")
 theme_override_font_sizes/font_size = 20
 text = "No connections"

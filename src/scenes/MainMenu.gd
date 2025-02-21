@@ -3,37 +3,31 @@ class_name MainMenu extends CanvasLayer
 signal host_pressed
 signal connect_pressed
 
-var _info_label: Label
-
-func _ready():
-	self._info_label = $CenterContainer/Menu/InfoLabel
-	for ip in IP.get_local_addresses():
-		if ip.begins_with('192.168'):
-			self._info_label.text = ip
-			
-			break
+@onready var _info_label: Label = $VBoxContainer/InfoLabel
 
 func _on_host_pressed():
 	self.host_pressed.emit()
-
+	
 func _on_connect_pressed():
 	self.connect_pressed.emit()
+	
+func _on_host_settings_pressed():
+	var window = Utils.Preloaded.HOST_SETTINGS.instantiate()
+	
+	add_child(window)
 
-func show_message(text: String) -> void:
+func _show_message(text: String) -> void:
 	self._info_label.add_theme_color_override('font_color', Color(1, 1, 1))
 	self._info_label.show_message(text)
 
-func show_temp_message(text: String) -> Signal:
-	self._info_label.add_theme_color_override('font_color', Color(1, 1, 1))
-	return self._info_label.show_temp_message(text)
-
-func show_error_message(text: String) -> void:
-	self._info_label.add_theme_color_override('font_color', Color(1, 0, 0))
-	self._info_label.show_message(text)
-
-func show_error_temp_message(text: String) -> Signal:
-	self._info_label.add_theme_color_override('font_color', Color(1, 0, 0))
-	return self._info_label.show_temp_message(text)
+func show_error_temp_message(text: String):
+	ToastParty.show({
+		"text": text,
+		"direction": 'center',
+		"gravity": 'top',
+		"bgcolor": Color(1, 0, 0, 0.7),
+		"color": Color(1, 1, 1, 1)
+	})
 
 func hide_message():
 	self._info_label.hide()

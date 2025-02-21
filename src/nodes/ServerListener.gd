@@ -67,7 +67,8 @@ class ServerInfo:
 	var sender_port: int
 	var last_seen: float
 	
-	func _init(received_data: Variant, sender_ip: String, sender_port: int, last_seen: float):
+	func _init(received_data: Variant, sender_ip: String, sender_port: int, 
+				last_seen: float):
 		self.received_data = received_data
 		self.sender_ip = sender_ip
 		self.sender_port = sender_port
