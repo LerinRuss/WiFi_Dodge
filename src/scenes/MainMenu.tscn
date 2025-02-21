@@ -1,0 +1,106 @@
+[gd_scene load_steps=7 format=3 uid="uid://pgmbioirtwj0"]
+
+[ext_resource type="Script" path="res://src/scenes/MainMenu.gd" id="1_2m06x"]
+[ext_resource type="FontFile" uid="uid://ggggasvo4rei" path="res://resources/fonts/Xolonium-Regular.ttf" id="1_xgf8s"]
+[ext_resource type="Texture2D" uid="uid://cleneyyefqwx8" path="res://resources/pictures/main_menu.png" id="2_0bp7q"]
+[ext_resource type="Shortcut" uid="uid://dlypf33gwc5rl" path="res://resources/shortcuts/start_game_shortcut.tres" id="2_gv1ge"]
+[ext_resource type="PackedScene" uid="uid://b8rp2hocdnlwt" path="res://src/scenes/MessageLabel.tscn" id="3_81dru"]
+[ext_resource type="Texture2D" uid="uid://dfdt4u63rnrf3" path="res://resources/gear.svg" id="5_8cb7k"]
+
+[node name="HUD Main Menu" type="CanvasLayer"]
+script = ExtResource("1_2m06x")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_0bp7q")
+expand_mode = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Padding" type="Control" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="Message" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 45
+text = "Dodge the Creeps!"
+
+[node name="Padding2" type="Control" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="InfoLabel" parent="VBoxContainer" instance=ExtResource("3_81dru")]
+custom_minimum_size = Vector2(300, 250)
+layout_mode = 2
+size_flags_horizontal = 1
+size_flags_vertical = 1
+temp_message_secs = 5
+
+[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Menu" type="VBoxContainer" parent="VBoxContainer/CenterContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/CenterContainer/Menu"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/CenterContainer/Menu/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="HostBar" type="HBoxContainer" parent="VBoxContainer/CenterContainer/Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Host" type="Button" parent="VBoxContainer/CenterContainer/Menu/MarginContainer/VBoxContainer/HostBar"]
+custom_minimum_size = Vector2(250, 100)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_xgf8s")
+theme_override_font_sizes/font_size = 64
+shortcut = ExtResource("2_gv1ge")
+text = "Start"
+
+[node name="HostSettings" type="Button" parent="VBoxContainer/CenterContainer/Menu/MarginContainer/VBoxContainer/HostBar"]
+visible = false
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+icon = ExtResource("5_8cb7k")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="ConnectBar" type="HBoxContainer" parent="VBoxContainer/CenterContainer/Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Connect" type="Button" parent="VBoxContainer/CenterContainer/Menu/MarginContainer/VBoxContainer/ConnectBar"]
+custom_minimum_size = Vector2(250, 100)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_xgf8s")
+theme_override_font_sizes/font_size = 50
+text = "Connect
+"
+
+[node name="ConnectSettings" type="Button" parent="VBoxContainer/CenterContainer/Menu/MarginContainer/VBoxContainer/ConnectBar"]
+visible = false
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+icon = ExtResource("5_8cb7k")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[connection signal="pressed" from="VBoxContainer/CenterContainer/Menu/MarginContainer/VBoxContainer/HostBar/Host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="VBoxContainer/CenterContainer/Menu/MarginContainer/VBoxContainer/HostBar/HostSettings" to="." method="_on_host_settings_pressed"]
+[connection signal="pressed" from="VBoxContainer/CenterContainer/Menu/MarginContainer/VBoxContainer/ConnectBar/Connect" to="." method="_on_connect_pressed"]

@@ -1,0 +1,13 @@
+[gd_scene load_steps=4 format=3 uid="uid://te0g3i5aqpii"]
+
+[ext_resource type="Script" path="res://src/scenes/control/FullPlayerControl.gd" id="1_o6xj2"]
+[ext_resource type="Script" path="res://src/scenes/control/KeyBoardPlayerControl.gd" id="2_b7r1x"]
+[ext_resource type="PackedScene" uid="uid://dg1y7d3lss2m3" path="res://src/scenes/control/FullScreen_Player_VJ_Control.tscn" id="3_3fh10"]
+
+[node name="FullPlayerControl" type="Node2D"]
+script = ExtResource("1_o6xj2")
+
+[node name="KeyBoardPlayerControl" type="Node" parent="."]
+script = ExtResource("2_b7r1x")
+
+[node name="FullScreen_Player_VJ_Control" parent="." instance=ExtResource("3_3fh10")]

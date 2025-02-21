@@ -10,22 +10,43 @@ config_version=5
 
 [application]
 
-config/name="Simple Dodger"
-run/main_scene="res://src/mobile.tscn"
+config/name="WiFi Dodge"
+run/main_scene="res://src/scenes/GameControl.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
 config/icon="res://icon.svg"
 
+[autoload]
+
+RpcAwait="*res://addons/rpc-await/rpc_await.gd"
+ToastParty="*res://addons/toastparty/toast-autoload.gd"
+
 [display]
 
-window/size/viewport_width=480
-window/size/viewport_height=720
-window/stretch/mode="canvas_items"
-window/stretch/aspect="ignore"
+window/size/viewport_width=600
+window/size/viewport_height=800
+window/stretch/mode="viewport"
+window/stretch/aspect="expand"
 window/handheld/orientation=1
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/rpc-await/plugin.cfg", "res://addons/toastparty/plugin.cfg")
+
+[gui]
+
+theme/custom_font="res://resources/fonts/Xolonium-Regular.ttf"
 
 [input_devices]
 
 pointing/emulate_touch_from_mouse=true
+
+[layer_names]
+
+2d_physics/layer_1="Default"
+
+[physics]
+
+2d/default_linear_damp=0.0
 
 [rendering]
 

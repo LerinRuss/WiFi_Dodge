@@ -1,0 +1,97 @@
+[gd_scene load_steps=6 format=3 uid="uid://ba5wqudnfomds"]
+
+[ext_resource type="PackedScene" uid="uid://te0g3i5aqpii" path="res://src/scenes/control/FullPlayerControl.tscn" id="1_xchpx"]
+[ext_resource type="PackedScene" uid="uid://cottft2ehstys" path="res://src/units/player/player_fish.tscn" id="2_acj42"]
+
+[sub_resource type="GDScript" id="GDScript_grh33"]
+script/source = "extends Node
+
+signal body_entered(body: Node2D)
+
+@export var id = -1:
+	set(_id):
+		id = _id
+		$ClientSynchronizer.set_multiplayer_authority(_id)
+@export var position: Vector2:
+	set(pos):
+		$Player.position = pos
+	get:
+		return $Player.position
+
+@export var vector_step: Vector2:
+	set(step):
+		self.player.step_vector = step
+	get:
+		return self.player.step_vector
+@export var character_control_scene: PackedScene
+var logic: EntityLogic:
+	set(logic):
+		$Player.logic = logic
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta):
+	pass
+
+func get_shape_boundaries() -> Rect2:
+	return $Player.get_shape_boundaries()
+	
+func set_subordinate_animator():
+	$Player.set_subordinate_animator()
+	
+func set_main_animator():
+	$Player.set_main_animator()
+
+
+func _on_player_body_entered(body: Node2D):
+	body_entered.emit(body)
+
+func set_controlable():
+	var character_control: Node = character_control_scene.instantiate()
+	character_control.player = $Player
+	add_child(character_control)
+
+func disable():
+	$Player.disable()
+	
+func enable():
+	$Player.enable()
+"
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_63vey"]
+properties/0/path = NodePath(".:id")
+properties/0/spawn = true
+properties/0/replication_mode = 0
+properties/1/path = NodePath("Player:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath("Player:position")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+properties/3/path = NodePath("Player:visible")
+properties/3/spawn = true
+properties/3/replication_mode = 1
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_w52c2"]
+properties/0/path = NodePath("Player:step_vector")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[node name="WiFiPlayer" type="Node"]
+script = SubResource("GDScript_grh33")
+character_control_scene = ExtResource("1_xchpx")
+
+[node name="Player" parent="." instance=ExtResource("2_acj42")]
+position = Vector2(0, 0)
+
+[node name="ServerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_63vey")
+
+[node name="ClientSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_w52c2")
+
+[connection signal="body_entered" from="Player" to="." method="_on_player_body_entered"]
