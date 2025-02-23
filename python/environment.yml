@@ -1,0 +1,10 @@
+name: WiFi-PoPiD
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.12
+  - stable-baselines3
+  - pip
+  - pip:
+      - godot-rl

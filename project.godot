@@ -30,7 +30,9 @@ window/handheld/orientation=1
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/admob/plugin.cfg", "res://addons/rpc-await/plugin.cfg", "res://addons/toastparty/plugin.cfg")
+enabled=PackedStringArray("res://addons/admob/plugin.cfg", "res://addons/rpc-await/plugin.cfg",
+"res://addons/toastparty/plugin.cfg",
+"res://addons/rl-agents/plugin.cfg")
 
 [gui]
 
