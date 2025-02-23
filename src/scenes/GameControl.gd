@@ -1,11 +1,13 @@
 # Main Control Node where should be only one main Scene at the same time
 # Auxiliary Nodes can be added but should be removed after their completion
+# This class should be reinitialized during the live cycle
 class_name GameControl extends Node
 
 # Here should be fields only shared between all possible sub nodes 
 # (e.g. main menu, server, client and so on)
 
 func _ready():
+	MobileAds.initialize()
 	replace_on_main_menu()
 
 func on_host_pressed():
