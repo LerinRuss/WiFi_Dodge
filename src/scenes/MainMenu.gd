@@ -5,6 +5,12 @@ signal connect_pressed
 
 @onready var _info_label: Label = $VBoxContainer/InfoLabel
 
+func _ready():
+	var ad_view := AdView.new('ca-app-pub-3940256099942544/6300978111', AdSize.BANNER, 
+		AdPosition.Values.BOTTOM)
+	ad_view.load_ad(AdRequest.new())
+	ad_view.show()
+
 func _on_host_pressed():
 	self.host_pressed.emit()
 	
