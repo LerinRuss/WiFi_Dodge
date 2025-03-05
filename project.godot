@@ -8,9 +8,15 @@
 
 config_version=5
 
+[admob]
+
+banner_real_id="ca-app-pub-3940256099942544/6300978111"
+banner_test_id="ca-app-pub-3940256099942544/6300978111"
+
 [application]
 
 config/name="WiFi PoPiD"
+config/version="1.0.0"
 run/main_scene="res://src/scenes/GameControl.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
 config/icon="res://icon.svg"
