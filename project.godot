@@ -10,8 +10,8 @@ config_version=5
 
 [admob]
 
-banner_real_id="ca-app-pub-3940256099942544/6300978111"
-banner_test_id="ca-app-pub-3940256099942544/6300978111"
+banner_id="ca-app-pub-3940256099942544/6300978111"
+ad_enabled=false
 
 [application]
 
@@ -25,6 +25,7 @@ config/icon="res://icon.svg"
 
 RpcAwait="*res://addons/rpc-await/rpc_await.gd"
 ToastParty="*res://addons/toastparty/toast-autoload.gd"
+Advertisement="*res://src/nodes/Advertisement.gd"
 
 [display]
 

@@ -7,7 +7,6 @@ class_name GameControl extends Node
 # (e.g. main menu, server, client and so on)
 
 func _ready():
-	MobileAds.initialize()
 	replace_on_main_menu()
 
 func on_host_pressed():
@@ -28,7 +27,7 @@ func on_host_pressed():
 	
 			menu.show_error_temp_message("Server couldn't be set up. Error code is %s." % error))
 
-	self._bind_and_replace(game, rpc_wrapper, [server])
+	self._bind_game_and_replace(game, rpc_wrapper, [server])
 	print('GameControl. Host set up.')
 
 func on_connect_pressed():
@@ -119,7 +118,7 @@ func on_connect_pressed():
 	get_viewport().canvas_transform = get_viewport().canvas_transform.scaled(scale)
 	print("GameControl. New Original Size. Size %s." % Utils.get_screen_size(self))
 	
-	_bind_and_replace(game, GameRpcWrapper.new(game), [])
+	_bind_game_and_replace(game, GameRpcWrapper.new(game), [])
 	
 	print('Game Control. Client is ready.')
 	print("GameControl. Await for the server is completed.")
@@ -147,7 +146,8 @@ func reset_state_and_replace_with_main_menu() -> MainMenu:
 	
 	return replace_on_main_menu()
 
-func _bind_and_replace(game: Playfield, game_rpc_wrapper: GameRpcWrapper, nodes: Array[Node]):
+func _bind_game_and_replace(game: Playfield, game_rpc_wrapper: GameRpcWrapper, nodes: Array[Node]):
+	Advertisement.hide_banner()
 	var wifi_game: Node = Node.new()
 	wifi_game.name = 'WiFiGame'
 	
@@ -164,6 +164,7 @@ func replace_on_main_menu() -> MainMenu:
 	main_menu.host_pressed.connect(self.on_host_pressed)
 	
 	self.replace(main_menu)
+	Advertisement.show_banner()
 	
 	return main_menu
 
