@@ -6,8 +6,14 @@ signal connect_pressed
 @onready var _info_label: Label = $VBoxContainer/InfoLabel
 
 func _ready():
-	var ad_view := AdView.new('ca-app-pub-3940256099942544/6300978111', AdSize.BANNER, 
-		AdPosition.Values.BOTTOM)
+	var admob_banner_id: String
+	
+	if OS.has_feature("release"):
+		admob_banner_id = ProjectSettings.get("admob/banner_real_id")
+	else:
+		admob_banner_id = ProjectSettings.get("admob/banner_test_id")
+	
+	var ad_view := AdView.new(admob_banner_id, AdSize.BANNER, AdPosition.Values.BOTTOM)
 	ad_view.load_ad(AdRequest.new())
 	ad_view.show()
 
