@@ -14,6 +14,7 @@ var score: int:
 		score = value
 		$"HUD".update_score(score)
 var total_players_amount: int
+var _background_music: AudioStreamPlayer
 
 func _init(game_mode: Mode = -1):  # game_mode = -1 by default 'cause the default that's 0  means the first from MODS
 	self.game_mode = game_mode
@@ -22,6 +23,7 @@ func _ready():
 	print('Playfield. Chosen Mode: ' + Mode.find_key(game_mode)
 			+ ' from the pool: ' + str(Mode.keys()))
 	show_mode(game_mode)
+	self._background_music = $"Background Music"
 	
 func process_game_over(): # -> bool:
 	match self.game_mode:
@@ -68,10 +70,10 @@ func show_message(text: String) -> void:
 	$"HUD Message".show_message(text)
 
 func play_music() -> void:
-	$Music.play()
+	self._background_music.play()
 
 func stop_music() -> void:
-	$Music.stop()
+	self._background_music.stop()
 
 func play_sound() -> void:
 	$DeathSound.play()
