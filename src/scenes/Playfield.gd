@@ -106,12 +106,14 @@ func free_player(id: int):
 
 func _on_player_spawner_spawned(spawned_node):
 	var player = spawned_node
+
+	player.logic = EntityLogic.new(Rect2(Vector2.ZERO, game_border))
 	
 	if player.id != multiplayer.get_unique_id():
 		player.set_subordinate_animator()
 		
 		return
-	
+
 	player.set_controlable()
 	player.set_main_animator()
 
