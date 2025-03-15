@@ -8,6 +8,7 @@ enum Mode {FIRST_OUT, LAST_ONE_STANDING, COOP}
 @export var player_scene: PackedScene
 @export var mob_scene: PackedScene
 @export var game_border: Vector2
+var player_control_scene: PackedScene
 
 var score: int:
 	set(value):
@@ -46,13 +47,12 @@ func check_last_one_standing() -> bool:
 func check_coop() -> bool:
 	return self.get_players_amount() == 0
 
-func arrange_players(ids: PackedInt32Array) -> void:
-	for id in ids:
-		var player = self._init_player(id)
+func arrange_players(players: Array) -> void:
+	for player in players:
 		$Players.add_child(player, true)
 		self._on_player_spawner_spawned(player)
 	
-	self.total_players_amount = ids.size()
+	self.total_players_amount = players.size()
 
 func spawn_mob(mob_spawn_location: Node2D) -> void:
 	var mob = mob_scene.instantiate()
@@ -109,18 +109,18 @@ func _on_player_spawner_spawned(spawned_node):
 
 	player.logic = EntityLogic.new(Rect2(Vector2.ZERO, game_border))
 	
-	if player.id != multiplayer.get_unique_id():
-		player.set_subordinate_animator()
-		
+	if player.id == multiplayer.get_unique_id():
+		player.set_controlable(player_control_scene.instantiate())
+		player.set_main_animator()
+
 		return
 
-	player.set_controlable()
-	player.set_main_animator()
+	player.set_subordinate_animator()
 
 func _on_player_spawner_despawned(node):
 	pass
 
-func _init_player(id: int):
+func init_player(id: int):
 	var player = player_scene.instantiate()
 	player.logic = EntityLogic.new(Rect2(Vector2.ZERO, game_border))
 	player.id = id

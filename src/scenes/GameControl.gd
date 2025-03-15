@@ -10,18 +10,19 @@ func _ready():
 	replace_on_main_menu()
 
 func on_host_with_bot_pressed():
-	var server = bind_server()
-	server.with_bot = true
+	var server = bind_server(true)
 
-func bind_server() -> Node:
+func bind_server(with_bot: bool) -> Node:
 	PhysicsServer2D.set_active(true)
 	var game: Playfield = _instantiate_game()
 	game.game_mode = Playfield.Mode.values()[randi() % Playfield.Mode.size()]
 	game.game_border = Utils.get_screen_size(self)
+	game.player_control_scene = Utils.Preloaded.PLAYER_CONTROL
 	var rpc_wrapper = GameRpcWrapper.new(game)
 	var server: Node = Utils.Preloaded.DODGER_SERVER.instantiate()
 	server.name = 'ServerNode'
 	server.game_wrapper = rpc_wrapper
+	server.with_bot = with_bot
 	
 	server.error_on_host_occured.connect(
 		func on_host_server_error(error: Error):
@@ -35,8 +36,7 @@ func bind_server() -> Node:
 	return server
 
 func on_host_pressed():
-	var server = bind_server()
-	server.with_bot = false
+	var server = bind_server(false)
 
 func on_connect_pressed():
 	PhysicsServer2D.set_active(false)

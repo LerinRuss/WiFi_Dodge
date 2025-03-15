@@ -1,6 +1,5 @@
-[gd_scene load_steps=6 format=3 uid="uid://ba5wqudnfomds"]
+[gd_scene load_steps=5 format=3 uid="uid://ba5wqudnfomds"]
 
-[ext_resource type="PackedScene" uid="uid://te0g3i5aqpii" path="res://src/scenes/control/FullPlayerControl.tscn" id="1_xchpx"]
 [ext_resource type="PackedScene" uid="uid://cottft2ehstys" path="res://src/units/player/player_fish.tscn" id="2_acj42"]
 
 [sub_resource type="GDScript" id="GDScript_grh33"]
@@ -23,7 +22,6 @@ signal body_entered(body: Node2D)
 		self.player.step_vector = step
 	get:
 		return self.player.step_vector
-@export var character_control_scene: PackedScene
 var logic: EntityLogic:
 	set(logic):
 		$Player.logic = logic
@@ -41,8 +39,7 @@ func set_main_animator():
 func _on_player_body_entered(body: Node2D):
 	body_entered.emit(body)
 
-func set_controlable():
-	var character_control: Node = character_control_scene.instantiate()
+func set_controlable(character_control: Node):
 	character_control.player = $Player
 	add_child(character_control)
 
@@ -74,7 +71,6 @@ properties/0/replication_mode = 1
 
 [node name="WiFiPlayer" type="Node"]
 script = SubResource("GDScript_grh33")
-character_control_scene = ExtResource("1_xchpx")
 
 [node name="Player" parent="." instance=ExtResource("2_acj42")]
 position = Vector2(0, 0)

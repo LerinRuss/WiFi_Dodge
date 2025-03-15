@@ -45,6 +45,8 @@ func show_temp_message(text: String) -> Signal:
 
 [node name="Playfield" type="Node"]
 script = ExtResource("1_sre72")
+game_mode = null
+game_border = null
 
 [node name="Background" type="TextureRect" parent="."]
 anchors_preset = 15

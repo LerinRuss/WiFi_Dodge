@@ -16,6 +16,7 @@ const _PORT: int = 7000
 var text: String
 var _game_started: bool = false
 var with_bot: bool = false
+var player_scene: PackedScene
 
 func _ready():
 	var screen_size: Vector2 = Utils.get_screen_size(self)
@@ -34,7 +35,7 @@ func _ready():
 		error_on_host_occured.emit(error)
 		
 		return
-
+	
 	new_game()
 	$HUD.update_players_amount(self.multiplayer.get_peers().size(), _MAX_CONNECTIONS)
 
@@ -65,10 +66,25 @@ func new_game() -> void:
 	
 	var ids: PackedInt32Array = multiplayer.get_peers()
 	ids.append(1)
+	
+	var players = Array()
+	
+	for id in ids:
+		players.append(game_wrapper.game.init_player(id))
+	
 	if with_bot:
 		ids.sort()
-		ids.append(ids[ids.size() - 1] + 1)
-	game_wrapper.game.arrange_players(ids)
+		var bot_control = Utils.produce_node_with_script(load(\"res://src/scenes/control/BotControl.gd\"))
+		var screen_size: Vector2 = Utils.get_screen_size(self) # Copy past
+		bot_control.view_distance = screen_size.x / 3
+		bot_control.idle_point = screen_size / 2
+		
+		var bot = game_wrapper.game.init_player(ids[ids.size() - 1] + 1)
+		bot.set_controlable(bot_control)
+		
+		players.append(bot)
+	
+	game_wrapper.game.arrange_players(players)
 	
 	$StartTimer.start()
 	$HUD.hide_restart_button()
