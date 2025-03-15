@@ -15,6 +15,7 @@ const _PORT: int = 7000
 @export var game_wrapper: GameRpcWrapper
 var text: String
 var _game_started: bool = false
+var with_bot: bool = false
 
 func _ready():
 	var screen_size: Vector2 = Utils.get_screen_size(self)
@@ -64,6 +65,9 @@ func new_game() -> void:
 	
 	var ids: PackedInt32Array = multiplayer.get_peers()
 	ids.append(1)
+	if with_bot:
+		ids.sort()
+		ids.append(ids[ids.size() - 1] + 1)
 	game_wrapper.game.arrange_players(ids)
 	
 	$StartTimer.start()

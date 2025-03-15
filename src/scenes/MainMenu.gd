@@ -1,6 +1,7 @@
 class_name MainMenu extends CanvasLayer
 
 signal host_pressed
+signal host_with_bot_pressed
 signal connect_pressed
 
 @onready var _info_label: Label = $VBoxContainer/InfoLabel
@@ -12,7 +13,10 @@ func _ready():
 
 func _on_host_pressed():
 	self.host_pressed.emit()
-	
+
+func _on_host_with_bot_pressed():
+	self.host_with_bot_pressed.emit()
+
 func _on_connect_pressed():
 	self.connect_pressed.emit()
 	

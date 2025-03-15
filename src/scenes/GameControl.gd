@@ -9,14 +9,16 @@ class_name GameControl extends Node
 func _ready():
 	replace_on_main_menu()
 
-func on_host_pressed():
+func on_host_with_bot_pressed():
+	var server = bind_server()
+	server.with_bot = true
+
+func bind_server() -> Node:
 	PhysicsServer2D.set_active(true)
 	var game: Playfield = _instantiate_game()
 	game.game_mode = Playfield.Mode.values()[randi() % Playfield.Mode.size()]
 	game.game_border = Utils.get_screen_size(self)
-	
 	var rpc_wrapper = GameRpcWrapper.new(game)
-	
 	var server: Node = Utils.Preloaded.DODGER_SERVER.instantiate()
 	server.name = 'ServerNode'
 	server.game_wrapper = rpc_wrapper
@@ -29,6 +31,12 @@ func on_host_pressed():
 
 	self._bind_game_and_replace(game, rpc_wrapper, [server])
 	print('GameControl. Host set up.')
+	
+	return server
+
+func on_host_pressed():
+	var server = bind_server()
+	server.with_bot = false
 
 func on_connect_pressed():
 	PhysicsServer2D.set_active(false)
@@ -162,6 +170,7 @@ func replace_on_main_menu() -> MainMenu:
 	var main_menu: Node = preload("res://src/scenes/MainMenu.tscn").instantiate()
 	main_menu.connect_pressed.connect(self.on_connect_pressed)
 	main_menu.host_pressed.connect(self.on_host_pressed)
+	main_menu.host_with_bot_pressed.connect(self.on_host_with_bot_pressed)
 	
 	self.replace(main_menu)
 	Advertisement.show_banner()

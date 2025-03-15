@@ -82,6 +82,17 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
+[node name="Host With Bot Bar" type="HBoxContainer" parent="VBoxContainer/CenterContainer/Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Host" type="Button" parent="VBoxContainer/CenterContainer/Menu/MarginContainer/VBoxContainer/Host With Bot Bar"]
+custom_minimum_size = Vector2(250, 100)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_xgf8s")
+theme_override_font_sizes/font_size = 64
+shortcut = ExtResource("2_gv1ge")
+text = "Start With Bot"
+
 [node name="ConnectBar" type="HBoxContainer" parent="VBoxContainer/CenterContainer/Menu/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
@@ -107,5 +118,6 @@ stream = ExtResource("9_yqfhk")
 
 [connection signal="pressed" from="VBoxContainer/CenterContainer/Menu/MarginContainer/VBoxContainer/HostBar/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="VBoxContainer/CenterContainer/Menu/MarginContainer/VBoxContainer/HostBar/HostSettings" to="." method="_on_host_settings_pressed"]
+[connection signal="pressed" from="VBoxContainer/CenterContainer/Menu/MarginContainer/VBoxContainer/Host With Bot Bar/Host" to="." method="_on_host_with_bot_pressed"]
 [connection signal="pressed" from="VBoxContainer/CenterContainer/Menu/MarginContainer/VBoxContainer/ConnectBar/Connect" to="." method="_on_connect_pressed"]
 [connection signal="finished" from="Baclground Music" to="." method="play_background_music"]
